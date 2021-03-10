@@ -2,13 +2,17 @@ package com.bng.zbp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bng.zbp.model.request.CampaignRequest;
+import com.bng.zbp.model.request.IvrCampCreateReq;
+import com.bng.zbp.model.request.LoanConfigRequestRes;
 import com.bng.zbp.model.response.BaseResponse;
 import com.bng.zbp.model.response.CampaignResponseBO;
 import com.bng.zbp.model.response.CampaignResponseList;
@@ -53,7 +57,19 @@ public class ZbpCampaignController {
 
 	}
 	
+	@RequestMapping(value = URIConstants.CREATEIVRCAMP, method = RequestMethod.POST)
+	public BaseResponse createIvrCamp(@RequestBody IvrCampCreateReq requestData) {
+		BaseResponse response=campaignService.createIvrCamp(requestData);
+		return response;
+
+	}
 	
+	@RequestMapping(value = URIConstants.CREATELOANCONFIG, method = RequestMethod.POST)
+	public BaseResponse createLoanConfig(@RequestBody LoanConfigRequestRes requestData) {
+		BaseResponse response=campaignService.createLoanConfig(requestData);
+		return response;
+
+	}
 	
 	@RequestMapping(value = URIConstants.EDITCAMP, method = RequestMethod.POST)
 	public BaseResponse editCamp(@RequestBody CampCreateReqData requestData) {
@@ -61,6 +77,15 @@ public class ZbpCampaignController {
 		return campaignService.editCamp(requestData);
 
 	}
+	@GetMapping("/api/foos")
+	@ResponseBody
+	public BaseResponse getFlowById(@RequestParam long flowId) {
+		System.out.println("flowid:"+flowId);
+		return campaignService.getFlow(flowId);
+
+	}
+	
+	
 
 	@RequestMapping(value = URIConstants.TAGLIST, method = RequestMethod.GET)
 	public TagResponse tagList(@RequestParam(name = "user_id", required = false) String user_id) {

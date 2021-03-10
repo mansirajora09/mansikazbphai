@@ -16,6 +16,7 @@ public class CampCreateReqData {
 	private String contentType;
 	private String callbackURL;
 	private String[] publisher;
+	private int flow_id;
 	private String device;
 	private String country;
 	
@@ -241,6 +242,12 @@ public class CampCreateReqData {
 	}
 	public void setRunday(String runday) {
 		this.runday = runday;
+	}
+	public int getFlow_id() {
+		return flow_id;
+	}
+	public void setFlow_id(int flow_id) {
+		this.flow_id = flow_id;
 	}
 
 
