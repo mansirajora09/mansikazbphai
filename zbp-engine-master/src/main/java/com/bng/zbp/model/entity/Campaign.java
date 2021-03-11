@@ -90,8 +90,6 @@ public class Campaign extends BaseEntity {
 	private int currentClick ;
 	
 	
-
-
 	
 
 
