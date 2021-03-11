@@ -77,6 +77,9 @@ public class Campaign extends BaseEntity {
 	@Column(name = "sub_service_id")
 	private String subServiceId;
 	
+	@Column(name = "flow_id	")
+	private int flow_id;
+	
 	@Column(name = "max_click")
 	private int maxClick;
 	
@@ -97,7 +100,7 @@ public class Campaign extends BaseEntity {
 	public Campaign(String name, Date startDate, Date endDate, Time dailyStartTime, Time dailyEndTime,
 			CampaignType type, MediaType mediaType, FlowType flowType, String timeZone, String timeZoneName,
 			Boolean isCapping, Boolean isTargeting, String flow, Operator operatorId, Integer mxgraphId, int priority, String scp_flow_name,Status status ,Integer maxClick ,Integer currentClick  ,
-			Integer maxImpression, Integer currentImpression ) {
+			Integer maxImpression, Integer currentImpression,int flow_id ) {
 		super();
 		this.name = name;
 		this.startDate = startDate;
@@ -121,6 +124,7 @@ public class Campaign extends BaseEntity {
 		this.currentClick=currentClick;
 		this.maxImpression=maxImpression;
 		this.currentImpression=currentImpression;
+		this.flow_id=flow_id;
 
 	}
 

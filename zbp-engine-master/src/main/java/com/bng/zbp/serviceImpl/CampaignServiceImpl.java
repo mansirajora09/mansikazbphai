@@ -1,5 +1,6 @@
 package com.bng.zbp.serviceImpl;
 
+import java.security.SecureRandom;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,19 +19,29 @@ import org.springframework.stereotype.Service;
 import com.bng.zbp.business.CampBusinessLayer;
 import com.bng.zbp.businessImpl.CampBusinessLayerImpl;
 import com.bng.zbp.cache.repository.RedisRepository;
+import com.bng.zbp.controller.FileUpload;
 import com.bng.zbp.model.entity.Campaign;
 import com.bng.zbp.model.entity.CampaignContent;
 import com.bng.zbp.model.entity.CampaignPublisherLink;
 import com.bng.zbp.model.entity.Capping;
+import com.bng.zbp.model.entity.Flow;
+import com.bng.zbp.model.entity.LoanActions;
+import com.bng.zbp.model.entity.LoanConfiguration;
+import com.bng.zbp.model.entity.LoanOptions;
 import com.bng.zbp.model.entity.LogData;
 import com.bng.zbp.model.entity.Operator;
 import com.bng.zbp.model.entity.Publisher;
 import com.bng.zbp.model.entity.Tags;
+import com.bng.zbp.model.enums.ActionType;
 import com.bng.zbp.model.enums.CampaignType;
 import com.bng.zbp.model.enums.FlowType;
 import com.bng.zbp.model.enums.MediaType;
 import com.bng.zbp.model.enums.Status;
+import com.bng.zbp.model.request.Actions;
 import com.bng.zbp.model.request.CampaignRequest;
+import com.bng.zbp.model.request.IvrCampCreateReq;
+import com.bng.zbp.model.request.IvrFlow;
+import com.bng.zbp.model.request.LoanConfigRequestRes;
 import com.bng.zbp.model.response.BaseResponse;
 import com.bng.zbp.model.response.CampaignResponseBO;
 import com.bng.zbp.model.response.CampaignResponseList;
@@ -43,6 +54,9 @@ import com.bng.zbp.repository.CampaignContentRepository;
 import com.bng.zbp.repository.CampaignPublisherLinkRepository;
 import com.bng.zbp.repository.CampaignRepository;
 import com.bng.zbp.repository.CappingRepository;
+import com.bng.zbp.repository.FlowRepository;
+import com.bng.zbp.repository.Loan_configuration_Repo;
+import com.bng.zbp.repository.Loan_options_Repo;
 import com.bng.zbp.repository.LogsRepository;
 import com.bng.zbp.repository.OperatorRepository;
 import com.bng.zbp.repository.PublisherRepository;
@@ -53,6 +67,7 @@ import com.bng.zbp.request.ServiceCampBO;
 import com.bng.zbp.request.Timestamp;
 import com.bng.zbp.service.CampaignService;
 import com.bng.zbp.service.DateTimeConverter;
+import com.bng.zbp.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -68,7 +83,8 @@ public class CampaignServiceImpl implements CampaignService {
 	private RedisRepository redisRepository;
 	@Autowired
 	private CampaignRepository campaignRepository;
-
+	@Autowired
+	private FlowRepository flowRepository;
 	@Autowired
 	private CampaignContentRepository campaignContentRepository;
 	@Autowired
@@ -90,7 +106,10 @@ public class CampaignServiceImpl implements CampaignService {
 	ServiceRepository serviceRepository;
 	@Autowired
 	LogsRepository logsRepository;
-
+    @Autowired
+    private Loan_configuration_Repo loanConfigRepository;
+    @Autowired
+    private Loan_options_Repo loan_optionsgRepository;
 	private Map<ResponseErrorKey, String> errorMap;
 	String success_status = "SUCCESS";
 	String fail_status = "FAILED";
@@ -136,8 +155,10 @@ public class CampaignServiceImpl implements CampaignService {
 		try {
 			Campaign campExist = campaignRepository.findByName(serviceCampBO.getName());
 			// use user authentication
+			
+			logger.info("Going to save camapgin 1"+gson.toJson(campExist));
 			if (campExist == null) {
-
+             
 				Optional<Operator> operator = operatorRepository.findById(serviceCampBO.getOperator_id());
 
 				/*
@@ -188,8 +209,10 @@ public class CampaignServiceImpl implements CampaignService {
 							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
 							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
-							serviceCampBO.getTotal_impression_count(), 0);
+							serviceCampBO.getTotal_impression_count(), 0,requestData.getFlow_id());
+
 					
+					logger.info("Going to save camapgin"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
 
 					if (requestData.getContentInfo() != null) {
@@ -330,7 +353,7 @@ public class CampaignServiceImpl implements CampaignService {
 
 		return null;
 	}
-//edit the status of campaign
+	//edit the status of campaign
 
 	private BaseResponse generate_url(String camp_id, String status, String url_format) {
 		// TODO Auto-generated method stub
@@ -396,6 +419,343 @@ public class CampaignServiceImpl implements CampaignService {
 			return response;
 		}
 
+	}
+
+	@Override
+	public BaseResponse getFlow(Long flowId) {
+		System.out.println("SERICE:"+flowId);
+		Optional<Flow> flow=flowRepository.findById(flowId);
+		System.out.println("FLOW:"+gson.toJson(flow));
+		return null;
+	}
+
+	@Override
+	public BaseResponse createIvrCamp(IvrCampCreateReq requestData) {
+
+		logger.info("Camapign Req"+gson.toJson(requestData));
+		// Create Camp Request
+		BaseResponse response = new BaseResponse();
+		errorMap = new HashMap<>();
+		CampCreateReqData createCamp=new CampCreateReqData();
+		createCamp.setService_Data(requestData.getService_Data());
+		int flowId=requestData.getFlow_id();
+		Flow flow=new Flow();
+		IvrFlow IvrFlowReq=requestData.getFlow();
+		String actionId=flowId+"1";
+		flow.setActionId(actionId);
+		flow.setActionType(IvrFlowReq.getType().name());
+		flow.setAudio(IvrFlowReq.getMain_audio_file().get(IvrFlowReq.getLanguage()[0]));
+		flow.setFlowId(flowId);
+
+		flow=setSubActions(flow,IvrFlowReq.getActions());
+		flowRepository.saveAndFlush(flow);
+		logger.info("FLOW DATA"+gson.toJson(flow));
+		dtmfSubActions(flow,IvrFlowReq.getLanguage(),IvrFlowReq.getActions());
+		//logger.info("FLOW DATA"+gson.toJson(flow));
+
+		ServiceCampBO serviceCampBO = campBusinessLayer.getSeriveInfo(createCamp);
+		
+		try {
+			Campaign campExist = campaignRepository.findByName(serviceCampBO.getName());
+			// use user authentication
+			if (campExist == null) {
+
+				Optional<Operator> operator = operatorRepository.findById(serviceCampBO.getOperator_id());
+
+
+		 //* Get Time from the Request
+
+				Map<String, String> timezone = requestData.getTimezone();
+				String getoperator = timezone.get("operator");
+				String timezonevalue = timezone.get("timezonevalue");
+
+				DateTimeConverter newdatetime = new DateTimeConverter();
+				String startDateTime = newdatetime.convertdate(serviceCampBO.getStart_date(),
+						serviceCampBO.getStart_time(), timezonevalue, getoperator);
+				String[] startUnits = startDateTime.split("T");
+				String endDateTime = newdatetime.convertdate(serviceCampBO.getEnd_date(), serviceCampBO.getEnd_time(),
+						timezonevalue, getoperator);
+				Timestamp timestamp = new Timestamp();
+				// String randomid = UUID.randomUUID().toString();
+
+				try {
+					Date iSOstartDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(startDateTime);
+					Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDateTime);
+					Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDateTime);
+
+					timestamp.setStarttime(iSOstartDateTime);
+					Date iSOendDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(endDateTime);
+
+					timestamp.setEndtime(iSOendDateTime);
+
+					serviceCampBO.setTimestamp(timestamp);
+
+					Date time = new java.util.Date();
+					String tableTimeDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+
+					Time startTime = Time.valueOf(serviceCampBO.getStart_time());
+
+					Time endTime = Time.valueOf(serviceCampBO.getEnd_time());
+
+					CampaignType type = CampaignType.valueOf(serviceCampBO.getType());
+					MediaType mediaType = MediaType.valueOf(serviceCampBO.getMedia_type());
+					FlowType flowType = FlowType.valueOf(serviceCampBO.getFlow());
+					Status status=Status.valueOf("SCHEDULED");
+					// Priority priority = Priority.valueOf(serviceCampBO.getPriority());
+					int priority = serviceCampBO.getPriority();
+					Operator operatorObject = operator.get();
+					String scp_flow_name = serviceCampBO.getService_name();
+
+					campExist = new Campaign(serviceCampBO.getName(), startDate, endDate, startTime, endTime, type,
+							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
+							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
+							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
+							serviceCampBO.getTotal_impression_count(), 0,flowId);
+
+					
+					logger.info("Going to save camapgin"+gson.toJson(campExist));
+					campExist = campaignRepository.save(campExist);
+
+					Optional<Publisher> id = publisherRepository.findById(serviceCampBO.getPublisher_id());
+					CampaignPublisherLink campaignPublisherLink = new CampaignPublisherLink(campExist, id.get());
+					CampaignPublisherLinkRepository.save(campaignPublisherLink);
+
+					// saved in campiagn publisher link table
+
+					// saving in capping table table
+
+					Capping cappingData = new Capping(serviceCampBO.getTotal_click_count(), 0,
+							serviceCampBO.getTotal_impression_count(), 0, campExist);
+
+					cappingRepository.save(cappingData);
+
+					// saved in capping table
+
+
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				response.setStatus(ResponseStatus.SUCCESS);
+
+				return response;
+			} else {
+
+				response.setStatus(ResponseStatus.FAILED);
+				logger.error("Nothing Found");
+				errorMap.put(ResponseErrorKey.ERROR, "Configuration with this operator and account name already exist");
+				response.setErrorMessageMap(errorMap);
+				return response;
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(ResponseStatus.FAILED);
+			logger.error("Error occurred while configuring sms");
+			errorMap.put(ResponseErrorKey.ERROR,
+					"Sms Config with this  account_name already exist  please use edit option to modify the sms config details or use different name");
+			response.setErrorMessageMap(errorMap);
+			return response;
+
+		}
+	
+	}
+
+	private Flow dtmfSubActions(Flow parentFlow, String[] language,List<Actions> actionsList) {	
+		for(Actions actions: actionsList) {
+			String withoutflowId=parentFlow.getActionId().substring(1);
+			String actionId=parentFlow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+			Flow flowOne=new Flow();
+			flowOne.setFlowId(parentFlow.getFlowId());
+			flowOne.setActionId(actionId);
+			if(actions.getType().name().equals("PLAY")){
+			flowOne.setAudio(actions.getAudio_file().get(language[0]));
+			}
+			flowOne.setActionType(actions.getType().name());
+
+			if(actions.getActions()!=null && actions.getActions().size()>0) {
+				flowOne=setSubActions(flowOne,actions.getActions());
+				flowOne.setBargin(true);
+				flowOne.setWaitTime(5);
+			}
+			if(actions.getUrl()!=null && ! actions.getUrl().isEmpty() ) {
+				flowOne.setUrl(actions.getUrl());
+				if(actions.getUrl_actions().size()>0) {
+					String withoutflowIdUrl=flowOne.getActionId().substring(1);
+					
+					String actionSuccesId=flowOne.getFlowId()+"+"+withoutflowIdUrl+"*"+actions.getUrl_actions().get(0).getLevel()+"*"+actions.getUrl_actions().get(0).getUrl_key().name();
+					String actionFailId=flowOne.getFlowId()+"+"+withoutflowIdUrl+"*"+actions.getUrl_actions().get(0).getLevel()+"*"+actions.getUrl_actions().get(1).getUrl_key().name();
+					flowOne.setUrlSuccess(actionSuccesId);
+					flowOne.setUrlFail(actionFailId);
+				}
+				dtmfSubActions(flowOne,language,actions.getUrl_actions());
+
+			}
+			logger.info("Nested flow:"+gson.toJson(flowOne));
+			flowRepository.saveAndFlush(flowOne);
+			if(actions.getActions()!=null && actions.getActions().size()>0) {
+				dtmfSubActions(flowOne,language,actions.getActions());
+			}
+		}
+		/*	for(Actions actions:actionsList) {
+			if(actions.getDtmf_key()!=0) {
+				String actionId=actions.getLevel()+"*"+actions.getDtmf_key();
+			  if(actions.getDtmf_key()==1) {
+				  flow.setOne(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+			  if(actions.getDtmf_key()==2) {
+				  flow.setTwo(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==3) {
+				  flow.setThree(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==4) {
+				  flow.setFour(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==5) {
+				  flow.setFive(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==6) {
+				  flow.setSix(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==7) {
+				  flow.setSeven(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==8) {
+				  flow.setEight(actionId);
+				  Flow flowOne=new Flow();
+				  setSubActions(flowOne,actions.getActions());
+			  }
+
+			  if(actions.getDtmf_key()==9) {
+				  flow.setNine(actionId);
+				  Flow flowNine=new Flow();
+				  flowNine=setSubActions(flowNine,actions.getActions());
+				 // c
+			  }
+
+
+			}
+
+		}*/
+		return null;
+	}
+
+	private Flow setSubActions(Flow flow,List<Actions> actionsList) {	
+		for(Actions actions:actionsList) {
+			if(actions.getDtmf_key()!=0) {
+				String withoutflowId=flow.getActionId().substring(1);
+			String actionId=flow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+				if(actions.getDtmf_key()==1) {
+					flow.setOne(actionId);
+				}
+				if(actions.getDtmf_key()==2) {
+					flow.setTwo(actionId);
+				}
+
+				if(actions.getDtmf_key()==3) {
+					flow.setThree(actionId);
+				}
+
+				if(actions.getDtmf_key()==4) {
+					flow.setFour(actionId);
+				}
+
+				if(actions.getDtmf_key()==5) {
+					flow.setFive(actionId);
+				}
+
+				if(actions.getDtmf_key()==6) {
+					flow.setSix(actionId);
+				}
+
+				if(actions.getDtmf_key()==7) {
+					flow.setSeven(actionId);
+				}
+
+				if(actions.getDtmf_key()==8) {
+					flow.setEight(actionId);
+				}
+
+				if(actions.getDtmf_key()==9) {
+					flow.setNine(actionId);
+					// c
+				}
+
+
+			}
+
+		}
+		return flow;
+	}
+	
+	public int randomId() {
+		SecureRandom random = new SecureRandom();
+		int num = random.nextInt(100000);
+		return num;
+	}
+
+	@Override
+	public BaseResponse createLoanConfig(LoanConfigRequestRes requestData) {
+		BaseResponse response =new BaseResponse();
+		try {
+		LoanConfiguration loan=new LoanConfiguration();
+		loan.setOperator_id(requestData.getOperatorId());
+		loan.setCheck_eligiblity_url(requestData.getCheck_eligiblity());
+		loan.setGetOption(requestData.getGetOption());
+		loan.setLoan_land_url(requestData.getLoan_request());
+		loan.setLoan_type(requestData.getLoan_type());
+		loan.setName(requestData.getName());
+		loanConfigRepository.save(loan);
+		LoanConfiguration loanConfig=loanConfigRepository.findByName(requestData.getName());
+		int loanId=loanConfig.getId();
+		//List<LoanOptions> loan_options=new ArrayList<>();
+		requestData.getLoanOption().forEach(loanOption->{
+			LoanOptions option=new LoanOptions();
+			LoanActions action=new LoanActions();
+			action.setPath(loanOption.getAudio_file());
+			action.setActionType(ActionType.PLAY.name());
+			action.setWaitTime(loanOption.getWaittime());
+			String actionId=loanId+"*"+loanOption.getLoan_amount();
+			action.setActionId(actionId);
+			action.setBargein(true);
+			//action.setActionId(actionId);
+			option.setFlow(gson.toJson(action));
+			option.setLoan_amount(loanOption.getLoan_amount());
+			option.setLoan_id(loanId);
+			loan_optionsgRepository.saveAndFlush(option);
+		});
+		logger.debug("Loan flow going to save");
+		response.setStatus(ResponseStatus.SUCCESS);
+		return response;
+		//logger.error("Error occurred while configuring sms");
+		}catch(Exception e){
+			response.setStatus(ResponseStatus.FAILED);
+			logger.debug("Error occurred while "+e.getMessage());
+			return response;
+		}
+		
+		
 	}
 
 }
