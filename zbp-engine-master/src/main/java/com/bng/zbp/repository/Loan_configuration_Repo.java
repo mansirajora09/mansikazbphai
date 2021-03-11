@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface Loan_configuration_Repo extends BaseJpaRepository<LoanConfiguration, Long> {
-
+	LoanConfiguration findByName(String name);
+	
 }

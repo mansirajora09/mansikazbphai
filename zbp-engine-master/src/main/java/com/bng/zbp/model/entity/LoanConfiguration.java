@@ -1,17 +1,22 @@
 package com.bng.zbp.model.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "loan_configuration")
 public class LoanConfiguration {
+	@Id
 private int id;
 private String check_eligiblity_url;
 private String loan_land_url;
 private String loan_provider_id;
 private String operator_id;
+@Column(name="get_option")
 private String getOption;
+private String name;
 private  String loan_type;
 public int getId() {
 	return id;
@@ -55,4 +60,11 @@ public String getLoan_type() {
 public void setLoan_type(String loan_type) {
 	this.loan_type = loan_type;
 }
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+
 }

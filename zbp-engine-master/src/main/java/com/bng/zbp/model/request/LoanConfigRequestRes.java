@@ -8,6 +8,7 @@ private String check_eligiblity;
 private String loan_request;
 private String getOption;
 private String loan_provider;
+private String name;
 private String loan_type;
 private List<LoanOptionRequestRes> loanOption;
 public String getOperatorId() {
@@ -45,6 +46,12 @@ public List<LoanOptionRequestRes> getLoanOption() {
 }
 public void setLoanOption(List<LoanOptionRequestRes> loanOption) {
 	this.loanOption = loanOption;
+}
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
 }
 public String getLoan_type() {
 	return loan_type;

@@ -717,32 +717,45 @@ public class CampaignServiceImpl implements CampaignService {
 
 	@Override
 	public BaseResponse createLoanConfig(LoanConfigRequestRes requestData) {
-		
+		BaseResponse response =new BaseResponse();
+		try {
 		LoanConfiguration loan=new LoanConfiguration();
 		loan.setOperator_id(requestData.getOperatorId());
 		loan.setCheck_eligiblity_url(requestData.getCheck_eligiblity());
 		loan.setGetOption(requestData.getGetOption());
 		loan.setLoan_land_url(requestData.getLoan_request());
+		loan.setLoan_type(requestData.getLoan_type());
+		loan.setName(requestData.getName());
 		loanConfigRepository.save(loan);
-		//loanConfigRepository.find
-		List<LoanOptions> loan_options=new ArrayList<>();
-		
+		LoanConfiguration loanConfig=loanConfigRepository.findByName(requestData.getName());
+		int loanId=loanConfig.getId();
+		//List<LoanOptions> loan_options=new ArrayList<>();
 		requestData.getLoanOption().forEach(loanOption->{
 			LoanOptions option=new LoanOptions();
 			LoanActions action=new LoanActions();
 			action.setPath(loanOption.getAudio_file());
 			action.setActionType(ActionType.PLAY.name());
 			action.setWaitTime(loanOption.getWaittime());
+			String actionId=loanId+"*"+loanOption.getLoan_amount();
+			action.setActionId(actionId);
 			action.setBargein(true);
 			//action.setActionId(actionId);
 			option.setFlow(gson.toJson(action));
 			option.setLoan_amount(loanOption.getLoan_amount());
-			loan_options.add(option);
-			
+			option.setLoan_id(loanId);
+			loan_optionsgRepository.saveAndFlush(option);
 		});
+		logger.debug("Loan flow going to save");
+		response.setStatus(ResponseStatus.SUCCESS);
+		return response;
+		//logger.error("Error occurred while configuring sms");
+		}catch(Exception e){
+			response.setStatus(ResponseStatus.FAILED);
+			logger.debug("Error occurred while "+e.getMessage());
+			return response;
+		}
 		
 		
-		return null;
 	}
 
 }
