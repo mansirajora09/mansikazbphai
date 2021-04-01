@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class BaseResponse {
     private String error;
-    private ResponseStatus status = ResponseStatus.FAILED;
+    private ResponseStatus status = ResponseStatus.SUCCESS;
 
     @JsonProperty("auth_token")
     private String authToken;
