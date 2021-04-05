@@ -45,7 +45,6 @@ public class UserActionEventController {
 	@Autowired
 	UserAuth userAuth;
 	
-	
 	@RequestMapping(URIConstants.NEWREGISTER)
 	@PostMapping
 	public String RegisterUser(@RequestBody RegisterRequest register_request) {
