@@ -24,6 +24,7 @@ public class CampaignRequest {
     Boolean vertical;
     Boolean horizontal;
     String device;
+    String camptype;
 
     public CampaignRequest() {
     }
@@ -31,7 +32,7 @@ public class CampaignRequest {
     public CampaignRequest(Long sessionId, Integer adsSize, String userAgent, String ip,
                            Boolean redirect, String txnId,
                            Boolean isCampaign, String msisdn, String pubId, Integer height, Integer width,
-                           Boolean square, Boolean vertical, Boolean horizontal, String device) {
+                           Boolean square, Boolean vertical, Boolean horizontal, String device,String camptype) {
         this.sessionId = sessionId;
         this.adsSize = adsSize;
         this.userAgent = userAgent;
@@ -47,5 +48,6 @@ public class CampaignRequest {
         this.vertical = vertical;
         this.horizontal = horizontal;
         this.device = device;
+        this.camptype=camptype;
     }
 }

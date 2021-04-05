@@ -119,9 +119,22 @@ public class CampaignServiceImpl implements CampaignService {
 		CampaignResponseList response = new CampaignResponseList();
 		try {
 			List<CampaignResponseBO> modelList = new ArrayList<>();
+			List<Campaign> campaignResponseList=new ArrayList<>();
 
-			List<Campaign> campaignResponseList = campaignRepository.findAll();
+			if(request.getCamptype().equalsIgnoreCase("ivr"))
+			{
+				 campaignResponseList = campaignRepository.findByType("IVR");
 
+			}
+			else if(request.getCamptype().equalsIgnoreCase("wap"))
+			{
+				 campaignResponseList = campaignRepository.findByType("WAP");
+
+			}
+			else
+			{
+			 campaignResponseList = campaignRepository.findAll();
+			}
 			if (campaignResponseList != null) {
 				campaignResponseList.forEach(camp -> {
 					CampaignResponseBO model = new CampaignResponseBO(camp);
