@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.LoanConfigRequestRes;
@@ -60,6 +61,13 @@ public class ZbpCampaignController {
 	@RequestMapping(value = URIConstants.CREATEIVRCAMP, method = RequestMethod.POST)
 	public BaseResponse createIvrCamp(@RequestBody IvrCampCreateReq requestData) {
 		BaseResponse response=campaignService.createIvrCamp(requestData);
+		return response;
+
+	}
+	
+	@RequestMapping(value = URIConstants.GETIVRCAMP, method = RequestMethod.POST)
+	public IvrCampCreateReq getIvrCamp(@RequestBody CampaignGetReq requestData) {
+		IvrCampCreateReq response=campaignService.getIvrCamp(requestData);
 		return response;
 
 	}

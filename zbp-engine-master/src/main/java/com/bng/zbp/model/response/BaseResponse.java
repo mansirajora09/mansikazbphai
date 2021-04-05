@@ -23,9 +23,6 @@ public class BaseResponse {
     private Date crdt;
     @JsonProperty("error_map")
     private Map<ResponseErrorKey,String> errorMessageMap;
-	public void setStatus(ResponseStatus success) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }

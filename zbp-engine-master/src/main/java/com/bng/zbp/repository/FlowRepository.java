@@ -1,13 +1,14 @@
 package com.bng.zbp.repository;
 
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-import com.bng.zbp.model.entity.Campaign;
+import org.springframework.stereotype.Repository;
 import com.bng.zbp.model.entity.Flow;
 /*
   @Author Karan
  */
 @Repository
 public interface FlowRepository extends BaseJpaRepository<Flow, Long>{
-
+ 
+	List<Flow> findAllByFlowIdOrderById(int flowId);
 }

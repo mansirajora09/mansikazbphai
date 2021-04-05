@@ -1,5 +1,6 @@
 package com.bng.zbp.service;
 
+import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.LoanConfigRequestRes;
@@ -29,5 +30,6 @@ public interface CampaignService {
 	BaseResponse getFlow(Long flowId);
 	BaseResponse createIvrCamp(IvrCampCreateReq requestData);
 	BaseResponse createLoanConfig(LoanConfigRequestRes requestData);
+	IvrCampCreateReq getIvrCamp(CampaignGetReq requestData);
 
 }
