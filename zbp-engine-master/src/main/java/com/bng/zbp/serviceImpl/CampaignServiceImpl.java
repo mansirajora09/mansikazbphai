@@ -38,6 +38,7 @@ import com.bng.zbp.model.enums.FlowType;
 import com.bng.zbp.model.enums.MediaType;
 import com.bng.zbp.model.enums.Status;
 import com.bng.zbp.model.request.Actions;
+import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.IvrFlow;
@@ -106,10 +107,10 @@ public class CampaignServiceImpl implements CampaignService {
 	ServiceRepository serviceRepository;
 	@Autowired
 	LogsRepository logsRepository;
-    @Autowired
-    private Loan_configuration_Repo loanConfigRepository;
-    @Autowired
-    private Loan_options_Repo loan_optionsgRepository;
+	@Autowired
+	private Loan_configuration_Repo loanConfigRepository;
+	@Autowired
+	private Loan_options_Repo loan_optionsgRepository;
 	private Map<ResponseErrorKey, String> errorMap;
 	String success_status = "SUCCESS";
 	String fail_status = "FAILED";
@@ -168,10 +169,10 @@ public class CampaignServiceImpl implements CampaignService {
 		try {
 			Campaign campExist = campaignRepository.findByName(serviceCampBO.getName());
 			// use user authentication
-			
+
 			logger.info("Going to save camapgin 1"+gson.toJson(campExist));
 			if (campExist == null) {
-             
+
 				Optional<Operator> operator = operatorRepository.findById(serviceCampBO.getOperator_id());
 
 				/*
@@ -224,7 +225,7 @@ public class CampaignServiceImpl implements CampaignService {
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
 							serviceCampBO.getTotal_impression_count(), 0,requestData.getFlow_id());
 
-					
+
 					logger.info("Going to save camapgin"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
 
@@ -467,7 +468,7 @@ public class CampaignServiceImpl implements CampaignService {
 		//logger.info("FLOW DATA"+gson.toJson(flow));
 
 		ServiceCampBO serviceCampBO = campBusinessLayer.getSeriveInfo(createCamp);
-		
+
 		try {
 			Campaign campExist = campaignRepository.findByName(serviceCampBO.getName());
 			// use user authentication
@@ -476,7 +477,7 @@ public class CampaignServiceImpl implements CampaignService {
 				Optional<Operator> operator = operatorRepository.findById(serviceCampBO.getOperator_id());
 
 
-		 //* Get Time from the Request
+				//* Get Time from the Request
 
 				Map<String, String> timezone = requestData.getTimezone();
 				String getoperator = timezone.get("operator");
@@ -525,7 +526,7 @@ public class CampaignServiceImpl implements CampaignService {
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
 							serviceCampBO.getTotal_impression_count(), 0,flowId);
 
-					
+
 					logger.info("Going to save camapgin"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
 
@@ -571,7 +572,7 @@ public class CampaignServiceImpl implements CampaignService {
 			return response;
 
 		}
-	
+
 	}
 
 	private Flow dtmfSubActions(Flow parentFlow, String[] language,List<Actions> actionsList) {	
@@ -582,7 +583,7 @@ public class CampaignServiceImpl implements CampaignService {
 			flowOne.setFlowId(parentFlow.getFlowId());
 			flowOne.setActionId(actionId);
 			if(actions.getType().name().equals("PLAY")){
-			flowOne.setAudio(actions.getAudio_file().get(language[0]));
+				flowOne.setAudio(actions.getAudio_file().get(language[0]));
 			}
 			flowOne.setActionType(actions.getType().name());
 
@@ -595,7 +596,6 @@ public class CampaignServiceImpl implements CampaignService {
 				flowOne.setUrl(actions.getUrl());
 				if(actions.getUrl_actions().size()>0) {
 					String withoutflowIdUrl=flowOne.getActionId().substring(1);
-					
 					String actionSuccesId=flowOne.getFlowId()+"+"+withoutflowIdUrl+"*"+actions.getUrl_actions().get(0).getLevel()+"*"+actions.getUrl_actions().get(0).getUrl_key().name();
 					String actionFailId=flowOne.getFlowId()+"+"+withoutflowIdUrl+"*"+actions.getUrl_actions().get(0).getLevel()+"*"+actions.getUrl_actions().get(1).getUrl_key().name();
 					flowOne.setUrlSuccess(actionSuccesId);
@@ -678,7 +678,7 @@ public class CampaignServiceImpl implements CampaignService {
 		for(Actions actions:actionsList) {
 			if(actions.getDtmf_key()!=0) {
 				String withoutflowId=flow.getActionId().substring(1);
-			String actionId=flow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+				String actionId=flow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
 				if(actions.getDtmf_key()==1) {
 					flow.setOne(actionId);
 				}
@@ -721,7 +721,7 @@ public class CampaignServiceImpl implements CampaignService {
 		}
 		return flow;
 	}
-	
+
 	public int randomId() {
 		SecureRandom random = new SecureRandom();
 		int num = random.nextInt(100000);
@@ -731,44 +731,145 @@ public class CampaignServiceImpl implements CampaignService {
 	@Override
 	public BaseResponse createLoanConfig(LoanConfigRequestRes requestData) {
 		BaseResponse response =new BaseResponse();
+		errorMap = new HashMap<>();
 		try {
-		LoanConfiguration loan=new LoanConfiguration();
-		loan.setOperator_id(requestData.getOperatorId());
-		loan.setCheck_eligiblity_url(requestData.getCheck_eligiblity());
-		loan.setGetOption(requestData.getGetOption());
-		loan.setLoan_land_url(requestData.getLoan_request());
-		loan.setLoan_type(requestData.getLoan_type());
-		loan.setName(requestData.getName());
-		loanConfigRepository.save(loan);
-		LoanConfiguration loanConfig=loanConfigRepository.findByName(requestData.getName());
-		int loanId=loanConfig.getId();
-		//List<LoanOptions> loan_options=new ArrayList<>();
-		requestData.getLoanOption().forEach(loanOption->{
-			LoanOptions option=new LoanOptions();
-			LoanActions action=new LoanActions();
-			action.setPath(loanOption.getAudio_file());
-			action.setActionType(ActionType.PLAY.name());
-			action.setWaitTime(loanOption.getWaittime());
-			String actionId=loanId+"*"+loanOption.getLoan_amount();
-			action.setActionId(actionId);
-			action.setBargein(true);
-			//action.setActionId(actionId);
-			option.setFlow(gson.toJson(action));
-			option.setLoan_amount(loanOption.getLoan_amount());
-			option.setLoan_id(loanId);
-			loan_optionsgRepository.saveAndFlush(option);
-		});
-		logger.debug("Loan flow going to save");
-		response.setStatus(ResponseStatus.SUCCESS);
-		return response;
-		//logger.error("Error occurred while configuring sms");
+			LoanConfiguration loan=new LoanConfiguration();
+			loan.setOperator_id(requestData.getOperatorId());
+			loan.setCheck_eligiblity_url(requestData.getCheck_eligiblity());
+			loan.setGetOption(requestData.getGetOption());
+			loan.setLoan_lend_url(requestData.getLoan_request());
+			loan.setLoan_type(requestData.getLoan_type());
+			loan.setName(requestData.getName());
+			boolean loanExist=loanConfigRepository.existsByName(requestData.getName());
+			logger.info("Camapign exist:"+loanExist);
+			//LoanConfiguration loanExist=loanConfigRepository.findByName(requestData.getName());
+			if(loanExist) {
+				response.setStatus(ResponseStatus.FAILED);
+				errorMap.put(ResponseErrorKey.ERROR,
+						"Loan configration with this name already exist.");
+				response.setErrorMessageMap(errorMap);
+				//logger.debug(""");
+				return response;
+
+			}
+			loanConfigRepository.save(loan);
+			LoanConfiguration loanConfig=loanConfigRepository.findByName(requestData.getName());
+			int loanId=loanConfig.getId();
+			//List<LoanOptions> loan_options=new ArrayList<>();
+			requestData.getLoanOption().forEach(loanOption->{
+				LoanOptions option=new LoanOptions();
+				LoanActions action=new LoanActions();
+				action.setPath(loanOption.getAudio_file());
+				action.setActionType(ActionType.PLAY.name());
+				action.setWaitTime(loanOption.getWaittime());
+				String actionId=loanId+"*"+loanOption.getLoan_amount();
+				action.setActionId(actionId);
+				action.setBargein(true);
+				//action.setActionId(actionId);
+				option.setFlow(gson.toJson(action));
+				option.setLoan_amount(loanOption.getLoan_amount());
+				option.setLoan_id(loanId);
+				loan_optionsgRepository.saveAndFlush(option);
+			});
+			logger.debug("Loan flow going to save");
+			response.setStatus(ResponseStatus.SUCCESS);
+			return response;
+			//logger.error("Error occurred while configuring sms");
 		}catch(Exception e){
 			response.setStatus(ResponseStatus.FAILED);
 			logger.debug("Error occurred while "+e.getMessage());
 			return response;
 		}
+
+
+	}
+
+	@Override
+	public IvrCampCreateReq getIvrCamp(CampaignGetReq requestData) {
+		List<Flow> flowList=flowRepository.findAllByFlowIdOrderById(4);
+		IvrCampCreateReq responce =new IvrCampCreateReq();
+		int level=1;
+
+		IvrFlow ivrFlow=getFlow(flowList,level);
+		responce.setFlow(ivrFlow);
+
+		System.out.println("Flow data:"+gson.toJson(flowList));
+		return responce;
+	}
+
+	IvrFlow getFlow( List<Flow> flowList,int level) {
+		Flow flow=flowList.get(0);
+		IvrFlow ivrFlow =new IvrFlow();
+		HashMap<String,String> audio_file=new HashMap<>();
+		audio_file.put("en", flow.getAudio());
+		ActionType actionType =ActionType.valueOf(flow.getActionType());
+		ivrFlow.setType(actionType);
+		ivrFlow.setMain_audio_file(audio_file);
+		List<Actions> actionList=new ArrayList<>();
+		if(flow.getZero()!=null && !flow.getZero().isEmpty()) {
+			List<Actions> actionList0=getSubFlow(flowList,flow.getZero(), level,0);
+			actionList.add(actionList0.get(0));
+			//actionList
+		}
+		if(flow.getOne()!=null && !flow.getOne().isEmpty()) {
+			List<Actions> actionList1=getSubFlow(flowList,flow.getOne(), level,1);
+			actionList.add(actionList1.get(0));
+		}
+		if(flow.getTwo()!=null && !flow.getTwo().isEmpty()) {
+			List<Actions> actionList2=getSubFlow(flowList,flow.getTwo(), level,2);
+			actionList.add(actionList2.get(0));
+		}
+		ivrFlow.setActions(actionList);
+		return ivrFlow;
+	}
+
+	List<Actions> getSubFlow( List<Flow> flowList,String actionId,int level,int dtmf) {
+		System.out.println("Inside Sub fLOW iD:"+actionId);
+		Optional<Flow> flowOpt=flowList.stream().filter(flowData->flowData.getActionId().equals(actionId)).findFirst();
+		Flow flow=flowOpt.get();
+		Actions actions =new Actions();
+		HashMap<String,String> audio_file=new HashMap<>();
+		audio_file.put("en", flow.getAudio());
+		ActionType actionType =ActionType.valueOf(flow.getActionType());
+		actions.setType(actionType);
+		actions.setAudio_file(audio_file);
+		actions.setLevel(level);
+		actions.setDtmf_key(dtmf);
+		if(flow.getZero()!=null && !flow.getZero().isEmpty()) {
+			List<Actions> actionList0=getSubFlow(flowList,flow.getZero(), level+1,0);
+			
+		}
+		if(flow.getOne()!=null && !flow.getOne().isEmpty()) {
+			List<Actions> actionList1=getSubFlow(flowList,flow.getOne(), level+1,1);
+		}
+		if(flow.getTwo()!=null && !flow.getTwo().isEmpty()) {
+			List<Actions> actionList2=getSubFlow(flowList,flow.getTwo(), level+1,2);
+		}
+		if(flow.getThree()!=null && !flow.getThree().isEmpty()) {
+			List<Actions> actionList3=getSubFlow(flowList,flow.getThree(), level+1,2);
+		}
+		if(flow.getFour()!=null && !flow.getFour().isEmpty()) {
+			List<Actions> actionList4=getSubFlow(flowList,flow.getFour(), level+1,2);
+		}
+		if(flow.getFive()!=null && !flow.getFive().isEmpty()) {
+			List<Actions> actionList5=getSubFlow(flowList,flow.getFive(), level+1,2);
+		}
+		if(flow.getSix()!=null && !flow.getSix().isEmpty()) {
+			List<Actions> actionList6=getSubFlow(flowList,flow.getSix(), level+1,2);
+		}
+		if(flow.getSeven()!=null && !flow.getSeven().isEmpty()) {
+			List<Actions> actionList7=getSubFlow(flowList,flow.getSeven(), level+1,2);
+		}
+		if(flow.getEight()!=null && !flow.getEight().isEmpty()) {
+			List<Actions> actionList8=getSubFlow(flowList,flow.getEight(), level+1,2);
+		}
+		if(flow.getThree()!=null && !flow.getNine().isEmpty()) {
+			List<Actions> actionList9=getSubFlow(flowList,flow.getThree(), level+1,2);
+		}
 		
-		
+		List<Actions> actionsList=new ArrayList<>();
+		actionsList.add(actions);
+		return actionsList;
 	}
 
 }

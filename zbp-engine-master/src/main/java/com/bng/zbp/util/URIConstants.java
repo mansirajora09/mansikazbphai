@@ -18,6 +18,7 @@ public class URIConstants {
 	public static final String EDITCAMP = "campaign/edit";
 	
 	public static final String LOGINURI = "/user/login";
+	public static final String GETIVRCAMP = "/get/ivrcamp";
 			
 
 
