@@ -17,4 +17,11 @@ import javax.persistence.Table;
 public class Publisher extends BaseEntity {
     @Column(name = "name")
     private String name;
+
+	public Publisher(String name) {
+		super();
+		this.name = name;
+	}
+    
+    
 }

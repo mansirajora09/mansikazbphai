@@ -122,9 +122,10 @@ public class CampaignServiceImpl implements CampaignService {
 			List<CampaignResponseBO> modelList = new ArrayList<>();
 			List<Campaign> campaignResponseList=new ArrayList<>();
 
+
 			if(request.getCamptype().equalsIgnoreCase("ivr"))
 			{
-				 campaignResponseList = campaignRepository.findByType("IVR");
+			 campaignResponseList = campaignRepository.findByType("IVR");
 
 			}
 			else if(request.getCamptype().equalsIgnoreCase("wap"))

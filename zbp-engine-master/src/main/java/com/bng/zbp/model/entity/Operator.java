@@ -38,8 +38,22 @@ public class Operator {
 
     }
     
+    
 
-    @Id
+ 
+
+
+
+	public Operator(Date crdt,Long createdBy, Boolean isActive, String name, String country) {
+		super();
+		this.crdt = crdt;
+		this.createdBy=createdBy;
+		this.isActive = isActive;
+		this.name = name;
+		this.country = country;
+	}
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     public Long getId() {

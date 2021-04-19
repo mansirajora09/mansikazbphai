@@ -28,7 +28,7 @@ public class RegisterRequest  {
 	private int tps;
 	private String cli;
 	private boolean blacklist;
-	private int operator;
+	//private int operator;
 	private String country; 
 	private String submenu_permission ;
 	private boolean verify_mail;
@@ -44,6 +44,7 @@ private int role;
 private String service_permission;
 
 
+private String userdata;
 
   
 public int getRole() {
@@ -252,12 +253,12 @@ public void setBlackouthours(List<HashMap<String, String>> blackouthours) {
 	public void setEnterprise(boolean enterprise) {
 		this.enterprise = enterprise;
 	}
-	public int getOperator() {
-		return operator;
-	}
-	public void setOperator(int operator) {
-		this.operator = operator;
-	}
+//	public int getOperator() {
+//		return operator;
+//	}
+//	public void setOperator(int operator) {
+//		this.operator = operator;
+//	}
 	public int getVendor_id() {
 		return vendor_id;
 	}
@@ -282,6 +283,14 @@ public void setBlackouthours(List<HashMap<String, String>> blackouthours) {
 	public void setService_permission(String service_permission) {
 		this.service_permission = service_permission;
 	}
+	public String getUserdata() {
+		return userdata;
+	}
+	public void setUserdata(String userdata) {
+		this.userdata = userdata;
+	}
+	
+	
 	
 	
 	

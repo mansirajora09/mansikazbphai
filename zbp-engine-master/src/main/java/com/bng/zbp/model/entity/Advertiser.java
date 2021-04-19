@@ -17,4 +17,11 @@ import javax.persistence.Table;
 public class Advertiser extends BaseEntity {
     @Column(name = "name")
     private String name;
+
+	public Advertiser(String name) {
+		super();
+		this.name = name;
+	}
+    
+    
 }

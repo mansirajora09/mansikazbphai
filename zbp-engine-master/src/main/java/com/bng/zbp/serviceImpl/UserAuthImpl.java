@@ -15,6 +15,8 @@ import com.bng.zbp.model.entity.UserMysqlPerDAO;
 import com.bng.zbp.model.request.RegisterRequest;
 import com.bng.zbp.model.request.UserMongo;
 import com.bng.zbp.model.response.LoginResponce;
+import com.bng.zbp.repository.OperatorRepository;
+import com.bng.zbp.repository.PublisherRepository;
 import com.bng.zbp.service.UserAuth;
 import com.bng.zbp.util.Utility;
 import com.google.gson.Gson;
@@ -27,7 +29,6 @@ public class UserAuthImpl implements UserAuth {
 	@Autowired
 	UserBusinessLayer userBusinessLayer;
 	
-
 	@Override
 	public String newRegister(RegisterRequest register_request) {
 		String saveuser = userBusinessLayer.saveUser(register_request);

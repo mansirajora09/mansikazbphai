@@ -118,8 +118,9 @@ public class ZbpCampaignController {
 	}
 
 	@RequestMapping(value = URIConstants.CAMPAIGNLIST, method = RequestMethod.GET)
-	public CampaignResponseList getCampaignList(){
+	public CampaignResponseList getCampaignList(@RequestParam(name = "camptype", required = false) String camptype){
 		CampaignRequest request = new CampaignRequest();
+		request.setCamptype(camptype);
 		return campaignService.getCampaignList(request);
 	}
 
