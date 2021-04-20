@@ -22,6 +22,11 @@ public class Publisher extends BaseEntity {
 		super();
 		this.name = name;
 	}
+
+	public Publisher() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
     
     
 }

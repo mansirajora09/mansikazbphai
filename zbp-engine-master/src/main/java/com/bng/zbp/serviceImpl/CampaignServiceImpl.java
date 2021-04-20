@@ -525,7 +525,7 @@ public class CampaignServiceImpl implements CampaignService {
 							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
 							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
-							serviceCampBO.getTotal_impression_count(), 0,flowId);
+							serviceCampBO.getTotal_impression_count(), 0,flowId,serviceCampBO.getService_name());
 
 
 					logger.info("Going to save camapgin"+gson.toJson(campExist));

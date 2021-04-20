@@ -22,6 +22,11 @@ public class Advertiser extends BaseEntity {
 		super();
 		this.name = name;
 	}
+
+	public Advertiser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
     
     
 }

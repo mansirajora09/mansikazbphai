@@ -23,6 +23,11 @@ public class Agency extends BaseEntity {
 		super();
 		this.name = name;
 	}
+
+	public Agency() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
     
     
 }

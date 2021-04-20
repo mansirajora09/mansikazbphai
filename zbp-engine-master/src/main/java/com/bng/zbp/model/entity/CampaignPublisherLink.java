@@ -28,6 +28,11 @@ public class    CampaignPublisherLink extends BaseEntity {
 		this.campaignId = campaignId;
 		this.publisherId = publisherId;
 	}
+
+	public CampaignPublisherLink() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
     
     
 
