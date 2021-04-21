@@ -30,6 +30,7 @@ import com.bng.zbp.model.entity.CampaignContent;
 import com.bng.zbp.model.entity.CampaignPublisherLink;
 import com.bng.zbp.model.entity.Capping;
 import com.bng.zbp.model.entity.Flow;
+import com.bng.zbp.model.entity.FlowMapping;
 import com.bng.zbp.model.entity.LoanActions;
 import com.bng.zbp.model.entity.LoanConfiguration;
 import com.bng.zbp.model.entity.LoanOptions;
@@ -45,6 +46,7 @@ import com.bng.zbp.model.enums.Status;
 import com.bng.zbp.model.request.Actions;
 import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
+import com.bng.zbp.model.request.CreateFlowReq;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.IvrFlow;
 import com.bng.zbp.model.request.LoanConfigRequestRes;
@@ -61,6 +63,7 @@ import com.bng.zbp.repository.CampaignContentRepository;
 import com.bng.zbp.repository.CampaignPublisherLinkRepository;
 import com.bng.zbp.repository.CampaignRepository;
 import com.bng.zbp.repository.CappingRepository;
+import com.bng.zbp.repository.FlowMappingRepository;
 import com.bng.zbp.repository.FlowRepository;
 import com.bng.zbp.repository.Loan_configuration_Repo;
 import com.bng.zbp.repository.Loan_options_Repo;
@@ -92,6 +95,8 @@ public class CampaignServiceImpl implements CampaignService {
 	private CampaignRepository campaignRepository;
 	@Autowired
 	private FlowRepository flowRepository;
+	@Autowired
+	private FlowMappingRepository flowMappingRepository;
 	@Autowired
 	private CampaignContentRepository campaignContentRepository;
 	@Autowired
@@ -497,6 +502,7 @@ public class CampaignServiceImpl implements CampaignService {
 		String actionId=flowId+"1";
 		flow.setActionId(actionId);
 		flow.setActionType(IvrFlowReq.getType().name());
+		flow.setSerialNumber(1);
 		flow.setAudio(IvrFlowReq.getMain_audio_file().get(IvrFlowReq.getLanguage()[0]));
 		flow.setFlowId(flowId);
 
@@ -745,7 +751,10 @@ public class CampaignServiceImpl implements CampaignService {
 		for(Actions actions:actionsList) {
 			if(actions.getDtmf_key()!=0) {
 				String withoutflowId=flow.getActionId().substring(1);
+				System.out.println("FLOWID********:"+withoutflowId);
 				String actionId=flow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+				System.out.println("Complete###########:"+actionId);
+				
 				if(actions.getDtmf_key()==1) {
 					flow.setOne(actionId);
 				}
@@ -937,6 +946,31 @@ public class CampaignServiceImpl implements CampaignService {
 		List<Actions> actionsList=new ArrayList<>();
 		actionsList.add(actions);
 		return actionsList;
+	}
+
+	@Override
+	public BaseResponse createFlow(CreateFlowReq request) {
+		BaseResponse response=new BaseResponse();
+		errorMap = new HashMap<>();
+		FlowMapping flow= new FlowMapping();
+		flow.setFlowName(request.getFlowName());
+		flow.setTag(request.getTag());
+		FlowMapping exist=flowMappingRepository.findAllByFlowName(request.getFlowName());
+		if(exist!=null) {
+			response.setStatus(ResponseStatus.FAILED);
+			response.setError("Flow already exist with this name");
+			return response;
+		}
+		response.setStatus(ResponseStatus.SUCCESS);
+		flowMappingRepository.save(flow);
+		return response;
+	}
+
+	@Override
+	public List<FlowMapping> getFlowList(CreateFlowReq request) {
+		System.out.println("userId:"+request.getUserId());
+		List<FlowMapping> flowList =flowMappingRepository.findAllByUserId(request.getUserId());
+		return flowList;
 	}
 
 }
