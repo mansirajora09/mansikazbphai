@@ -125,9 +125,23 @@ public class CampaignServiceImpl implements CampaignService {
 		CampaignResponseList response = new CampaignResponseList();
 		try {
 			List<CampaignResponseBO> modelList = new ArrayList<>();
+			List<Campaign> campaignResponseList=new ArrayList<>();
 
-			List<Campaign> campaignResponseList = campaignRepository.findAll();
 
+			if(request.getCamptype().equalsIgnoreCase("ivr"))
+			{
+			 campaignResponseList = campaignRepository.findByType("IVR");
+
+			}
+			else if(request.getCamptype().equalsIgnoreCase("wap"))
+			{
+				 campaignResponseList = campaignRepository.findByType("WAP");
+
+			}
+			else
+			{
+			 campaignResponseList = campaignRepository.findAll();
+			}
 			if (campaignResponseList != null) {
 				campaignResponseList.forEach(camp -> {
 					CampaignResponseBO model = new CampaignResponseBO(camp);
@@ -517,7 +531,7 @@ public class CampaignServiceImpl implements CampaignService {
 							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
 							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
-							serviceCampBO.getTotal_impression_count(), 0,flowId);
+							serviceCampBO.getTotal_impression_count(), 0,flowId,serviceCampBO.getService_name());
 
 
 					logger.info("Going to save camapgin"+gson.toJson(campExist));

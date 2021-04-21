@@ -41,6 +41,12 @@ public class Capping extends BaseEntity {
 		this.currentImpression = currentImpression;
 		this.campaignId = campaignId;
 	}
+
+
+	public Capping() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	
     
     

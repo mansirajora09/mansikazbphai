@@ -60,6 +60,10 @@ public class CampaignContent extends BaseEntity {
 		this.percentage = percentage;
 		this.campaignId = campaignId;
 	}
+	public CampaignContent() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
     
     

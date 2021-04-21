@@ -189,6 +189,7 @@ public class UserServiceImpl implements UserService {
 		
 		}catch (Exception e) {
 			response.setStatus(ResponseStatus.FAILED);
+			e.printStackTrace();
 			logger.error("Error occurred while fetching user using id");
 			errorMap.put(ResponseErrorKey.ERROR, "Error occurred while fetching User using id");
 			response.setErrorMessageMap(errorMap);
@@ -267,6 +268,7 @@ public class UserServiceImpl implements UserService {
 				}
 				
 			 else {
+				 
 				response.setStatus(ResponseStatus.FAILED);
 				errorMap.put(ResponseErrorKey.ERROR, "User with this id does not exist in bng ");
 				response.setErrorMessageMap(errorMap);
@@ -275,8 +277,9 @@ public class UserServiceImpl implements UserService {
 		
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			response.setStatus(ResponseStatus.FAILED);
-			logger.error("Error occurred while fetching user using id");
+			logger.error("Error occurred while fetching usersss using id");
 			errorMap.put(ResponseErrorKey.ERROR, "Error occurred while fetching User using id");
 			response.setErrorMessageMap(errorMap);
 			return response;

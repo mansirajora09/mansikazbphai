@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,14 +21,22 @@ import com.bng.zbp.business.UserBusinessLayer;
 import com.bng.zbp.controller.Mailer;
 import com.bng.zbp.controller.UserActionEventController;
 import com.bng.zbp.dao.UserRepository;
+import com.bng.zbp.model.entity.Advertiser;
+import com.bng.zbp.model.entity.Agency;
 import com.bng.zbp.model.entity.CampListRequestData;
 import com.bng.zbp.model.entity.LogData;
+import com.bng.zbp.model.entity.Operator;
+import com.bng.zbp.model.entity.Publisher;
 import com.bng.zbp.model.entity.User;
 import com.bng.zbp.model.entity.UserMongoBO;
 import com.bng.zbp.model.entity.UserMysqlPerDAO;
 import com.bng.zbp.model.request.RegisterRequest;
 import com.bng.zbp.model.request.UserMongo;
 import com.bng.zbp.model.response.UserResponse;
+import com.bng.zbp.repository.AdvertiserRepository;
+import com.bng.zbp.repository.AgencyRepository;
+import com.bng.zbp.repository.OperatorRepository;
+import com.bng.zbp.repository.PublisherRepository;
 import com.bng.zbp.util.URIConstants;
 import com.bng.zbp.util.Utility;
 import com.google.gson.Gson;
@@ -42,6 +51,15 @@ public class UserBusinessLayerImpl implements UserBusinessLayer {
 	Mailer mailer;
 	@Autowired
 	UserRepository userRepository;
+	@Autowired
+	OperatorRepository operatorRepository;
+	@Autowired
+	PublisherRepository publisherRepository;
+
+	@Autowired
+	AgencyRepository agencyRepository;
+	@Autowired 
+	AdvertiserRepository advertiserRepository;
 	
 	@Override
 	public String saveUser(RegisterRequest register_request) {
@@ -55,6 +73,44 @@ public class UserBusinessLayerImpl implements UserBusinessLayer {
 		//mapping request to save the data as iobd_users
 		new_user_data = Utility.mapUserMongoDAOListToUserMongoDOOList(userMongoDOO);
 
+if(register_request.getUserdata().equalsIgnoreCase("operator"))	
+    {
+  //  public Operator(Date crdt, Long createdBy, Date lastModifiedOn, Long lastModifiedBy, Boolean isActive, String name, String description, String logoImageUrl, String bannerUrl, String country) {
+//	public Operator(Date crdt, Boolean isActive, String name, String country) {
+
+	Operator operator_data = new Operator(	new Date(),12L,true,register_request.getName(),register_request.getCountry());
+	Operator operator=operatorRepository.save(operator_data);
+	new_user_data.setOperator(operator.getId());
+	}
+else if(register_request.getUserdata().equalsIgnoreCase("publisher"))	
+{
+//  public Operator(Date crdt, Long createdBy, Date lastModifiedOn, Long lastModifiedBy, Boolean isActive, String name, String description, String logoImageUrl, String bannerUrl, String country) {
+//public Operator(Date crdt, Boolean isActive, String name, String country) {
+
+Publisher operator_data = new Publisher(	register_request.getName());
+Publisher operator=publisherRepository.save(operator_data);
+new_user_data.setPublisher_id(operator.getId());
+} 
+else if(register_request.getUserdata().equalsIgnoreCase("agency"))	
+{
+//  public Operator(Date crdt, Long createdBy, Date lastModifiedOn, Long lastModifiedBy, Boolean isActive, String name, String description, String logoImageUrl, String bannerUrl, String country) {
+//public Operator(Date crdt, Boolean isActive, String name, String country) {
+
+	Agency operator_data = new Agency(	register_request.getName());
+	Agency operator=agencyRepository.save(operator_data);
+new_user_data.setAgency_id(operator.getId());
+}
+else if(register_request.getUserdata().equalsIgnoreCase("advertiser"))	
+{
+//  public Operator(Date crdt, Long createdBy, Date lastModifiedOn, Long lastModifiedBy, Boolean isActive, String name, String description, String logoImageUrl, String bannerUrl, String country) {
+//public Operator(Date crdt, Boolean isActive, String name, String country) {
+
+	Advertiser operator_data = new Advertiser(	register_request.getName());
+	Advertiser operator=advertiserRepository.save(operator_data);
+new_user_data.setAdvertiser_id(operator.getId());
+}
+
+		
 		UserResponse apiStatusRes = userRepository.saveuser(new_user_data, register_request);
 		String res = apiStatusRes.getResponse();
 		if (res.equals("success")) {
@@ -72,6 +128,11 @@ public class UserBusinessLayerImpl implements UserBusinessLayer {
 		}
 		String result = gson.toJson(apiStatusRes);
 		return result;
+	}
+
+	private int UserType(String user_type) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	public static String encodeUrl(String url) {

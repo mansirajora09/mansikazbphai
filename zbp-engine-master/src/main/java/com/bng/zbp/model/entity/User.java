@@ -46,9 +46,9 @@ public class User implements Serializable {
 	private int tps;
 	private String cli;
 	private boolean blacklist;
-	 @ManyToOne(fetch = FetchType.EAGER)
-	    @JoinColumn(name = "operator", insertable = true, updatable = false)
-	    private Operator operatorId;
+//	 @ManyToOne(fetch = FetchType.EAGER)
+//	    @JoinColumn(name = "operator", insertable = true, updatable = false)
+	    private Long operator;
 
 	private String country; 
 	private int role ;
@@ -74,7 +74,7 @@ public class User implements Serializable {
 			String permission, String superuserid, String superuser_name, String company_name, boolean isactive,
 			boolean issubuser, boolean superuser_operation, String joined_date, String msisdn_length,
 			String country_code, boolean append_countrycode, boolean retry, String mscip, String voicechannel, int tps,
-			String cli, boolean blacklist, Operator operatorId, String country, int role, boolean verify_mail,
+			String cli, boolean blacklist, Long operator, String country, int role, boolean verify_mail,
 			String userdata, String current_pin, boolean enterprise, String mobile, String currency, int vendor_id,
 			String last_modified_on, String last_modified_by, String service_permission) {
 		super();
@@ -101,7 +101,7 @@ public class User implements Serializable {
 		this.tps = tps;
 		this.cli = cli;
 		this.blacklist = blacklist;
-		this.operatorId = operatorId;
+		this.operator = operator;
 		this.country = country;
 		this.role = role;
 		this.verify_mail = verify_mail;

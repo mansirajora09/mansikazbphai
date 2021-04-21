@@ -18,4 +18,17 @@ public class Agency extends BaseEntity {
 
     @Column(name = "name")
     private String name;
+
+	public Agency(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Agency() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+    
 }
+

@@ -100,6 +100,39 @@ public class Campaign extends BaseEntity {
 	public Campaign(String name, Date startDate, Date endDate, Time dailyStartTime, Time dailyEndTime,
 			CampaignType type, MediaType mediaType, FlowType flowType, String timeZone, String timeZoneName,
 			Boolean isCapping, Boolean isTargeting, String flow, Operator operatorId, Integer mxgraphId, int priority, String scp_flow_name,Status status ,Integer maxClick ,Integer currentClick  ,
+			Integer maxImpression, Integer currentImpression,int flow_id,String serviceId ) {
+		super();
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.dailyStartTime = dailyStartTime;
+		this.dailyEndTime = dailyEndTime;
+		this.type = type;
+		this.mediaType = mediaType;
+		this.flowType = flowType;
+		this.timeZone = timeZone;
+		this.timeZoneName = timeZoneName;
+		this.isCapping = isCapping;
+		this.isTargeting = isTargeting;
+		this.flow = flow;
+		this.operatorId = operatorId;
+		this.mxgraphId = mxgraphId;		
+		this.priority = priority;
+		this.scp_flow_name = scp_flow_name;
+		this.status = status;
+		this.maxClick=maxClick;
+		this.currentClick=currentClick;
+		this.maxImpression=maxImpression;
+		this.currentImpression=currentImpression;
+		this.flow_id=flow_id;
+		this.serviceId=serviceId;
+
+	}
+
+
+	public Campaign(String name, Date startDate, Date endDate, Time dailyStartTime, Time dailyEndTime,
+			CampaignType type, MediaType mediaType, FlowType flowType, String timeZone, String timeZoneName,
+			Boolean isCapping, Boolean isTargeting, String flow, Operator operatorId, Integer mxgraphId, int priority, String scp_flow_name,Status status ,Integer maxClick ,Integer currentClick  ,
 			Integer maxImpression, Integer currentImpression,int flow_id ) {
 		super();
 		this.name = name;
@@ -127,8 +160,6 @@ public class Campaign extends BaseEntity {
 		this.flow_id=flow_id;
 
 	}
-
-
 
 
 	public Campaign() {
