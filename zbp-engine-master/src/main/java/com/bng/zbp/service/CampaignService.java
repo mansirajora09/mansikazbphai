@@ -1,7 +1,9 @@
 package com.bng.zbp.service;
 
+import com.bng.zbp.model.entity.FlowMapping;
 import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
+import com.bng.zbp.model.request.CreateFlowReq;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.LoanConfigRequestRes;
 import com.bng.zbp.model.response.BaseResponse;
@@ -31,5 +33,7 @@ public interface CampaignService {
 	BaseResponse createIvrCamp(IvrCampCreateReq requestData);
 	BaseResponse createLoanConfig(LoanConfigRequestRes requestData);
 	IvrCampCreateReq getIvrCamp(CampaignGetReq requestData);
+	BaseResponse createFlow(CreateFlowReq request);
+	List<FlowMapping> getFlowList(CreateFlowReq request);
 
 }

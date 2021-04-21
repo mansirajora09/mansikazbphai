@@ -16,9 +16,11 @@ public class URIConstants {
 	public static final String EDITCAMPSTATUS = "campaign/change/status";
 	public static final String EDITCAMPSTATUSURL = "http://127.0.0.1:6060/zbp_engine/edit/camp/sync?camp_id=|camp_id|&status=|status|";
 	public static final String EDITCAMP = "campaign/edit";
-	
 	public static final String LOGINURI = "/user/login";
 	public static final String GETIVRCAMP = "/get/ivrcamp";
+	public static final String GETFLOW = "/get/flow";
+	public static final String CREATEFLOW = "/create/flow";
+
 			
 
 

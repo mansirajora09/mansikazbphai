@@ -17,7 +17,7 @@ public class Flow {
 @Column(name = "flow_id")
 private int flowId;
 @Column(name = "serial_number")
-private String serialNumber;
+private int serialNumber;
 @Column(name = "action_id")
 private String actionId;
 @Column(name = "action_type")
@@ -57,9 +57,6 @@ private String url;
 @Column(name = "value")
 private String value;
 
-public String getSerialNumber() {
-	return serialNumber;
-}
 public String getActionId() {
 	return actionId;
 }
@@ -111,9 +108,6 @@ public String getUrl() {
 	return url;
 }
 
-public void setSerialNumber(String serialNumber) {
-	this.serialNumber = serialNumber;
-}
 public void setActionId(String actionId) {
 	this.actionId = actionId;
 }
@@ -187,6 +181,12 @@ public int getFlowId() {
 }
 public void setFlowId(int flowId) {
 	this.flowId = flowId;
+}
+public int getSerialNumber() {
+	return serialNumber;
+}
+public void setSerialNumber(int serialNumber) {
+	this.serialNumber = serialNumber;
 }
 
 

@@ -1,5 +1,7 @@
 package com.bng.zbp.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bng.zbp.model.entity.FlowMapping;
 import com.bng.zbp.model.request.CampaignGetReq;
 import com.bng.zbp.model.request.CampaignRequest;
+import com.bng.zbp.model.request.CreateFlowReq;
 import com.bng.zbp.model.request.IvrCampCreateReq;
 import com.bng.zbp.model.request.LoanConfigRequestRes;
 import com.bng.zbp.model.response.BaseResponse;
@@ -61,6 +65,19 @@ public class ZbpCampaignController {
 	@RequestMapping(value = URIConstants.CREATEIVRCAMP, method = RequestMethod.POST)
 	public BaseResponse createIvrCamp(@RequestBody IvrCampCreateReq requestData) {
 		BaseResponse response=campaignService.createIvrCamp(requestData);
+		return response;
+
+	}
+	@RequestMapping(value = URIConstants.CREATEFLOW, method = RequestMethod.POST)
+	public BaseResponse createFlow(@RequestBody CreateFlowReq request) {
+		BaseResponse response=campaignService.createFlow(request);
+		return response;
+
+	}
+	
+	@RequestMapping(value = URIConstants.GETFLOW, method = RequestMethod.POST)
+	public List<FlowMapping> getFlowList(@RequestBody CreateFlowReq request) {
+		List<FlowMapping> response=campaignService.getFlowList(request);
 		return response;
 
 	}
