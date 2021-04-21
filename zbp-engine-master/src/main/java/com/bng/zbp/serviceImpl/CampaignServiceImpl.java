@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import com.bng.zbp.business.CampBusinessLayer;
 import com.bng.zbp.businessImpl.CampBusinessLayerImpl;
 import com.bng.zbp.cache.repository.RedisRepository;
 import com.bng.zbp.controller.FileUpload;
+import com.bng.zbp.model.entity.BlackoutHours;
 import com.bng.zbp.model.entity.Campaign;
 import com.bng.zbp.model.entity.CampaignContent;
 import com.bng.zbp.model.entity.CampaignPublisherLink;
@@ -51,6 +56,7 @@ import com.bng.zbp.model.response.ResponseErrorKey;
 import com.bng.zbp.model.response.ResponseStatus;
 import com.bng.zbp.model.response.ServiceListResponse;
 import com.bng.zbp.model.response.TagResponse;
+import com.bng.zbp.repository.BlackoutHourRepository;
 import com.bng.zbp.repository.CampaignContentRepository;
 import com.bng.zbp.repository.CampaignPublisherLinkRepository;
 import com.bng.zbp.repository.CampaignRepository;
@@ -91,6 +97,8 @@ public class CampaignServiceImpl implements CampaignService {
 	@Autowired
 	CampaignPublisherLinkRepository CampaignPublisherLinkRepository;
 
+	@Autowired
+	BlackoutHourRepository blackoutHourRepository;
 	@Autowired
 	CappingRepository cappingRepository;
 
@@ -376,9 +384,39 @@ public class CampaignServiceImpl implements CampaignService {
 
 		CampBusinessLayerImpl campBusinessLayerImpl = new CampBusinessLayerImpl();
 		logger.info("Generated url : " + sub_url);
-		BaseResponse result = campBusinessLayer.fileConverter(sub_url, null);
+		BaseResponse response = new BaseResponse();
+				//campBusinessLayer.fileConverter(sub_url, null);
 
-		return result;
+		try {
+			Optional<Campaign> campExist = campaignRepository.findById(Long.valueOf(camp_id).longValue() );
+			// use user authentication
+			
+			if (campExist != null) {
+
+			Status statusget=Status.valueOf(status);
+
+				campExist.get().setStatus(statusget);
+				campaignRepository.save(campExist.get());
+			
+
+			} else {
+				response.setStatus(ResponseStatus.FAILED);
+				logger.error("No camp exist with this name ");
+				response.setError("No Camp exist with this name");
+				return response;
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(ResponseStatus.FAILED);
+			response.setError("Exception caught while editing the Campaign");
+			
+			return response;
+		}
+		response.setStatus(ResponseStatus.SUCCESS);
+		return response;
+		
 	}
 
 	@Override
@@ -525,11 +563,39 @@ public class CampaignServiceImpl implements CampaignService {
 							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
 							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
 							operatorObject, serviceCampBO.getMxgraph_id(), priority, scp_flow_name,status,serviceCampBO.getTotal_click_count(), 0,
-							serviceCampBO.getTotal_impression_count(), 0,flowId,serviceCampBO.getService_name());
+							serviceCampBO.getTotal_impression_count(), 0,flowId,serviceCampBO.getService_id(),serviceCampBO.getService_name());
 
 
 					logger.info("Going to save camapgin"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
+					
+					//Blackout hour start
+					
+					String[] blackouthour = requestData.getBlackouthour();
+	    	        String[] temp;
+	    			String delimiter = "-";
+	    			
+	    			for(int i=0;i<blackouthour.length;i++)
+	    			{		
+	    				BlackoutHours blackoutHours=new BlackoutHours();
+	    				temp = blackouthour[i].split(delimiter);   
+	    				String first = temp[0]+":00:00";   
+	    				
+	    				String last = temp[1]+":00:00";
+						System.out.println("starttime"+first+"last part :"+last);
+						blackoutHours.setStart_hour(first);
+						blackoutHours.setEnd_hour(last);
+						blackoutHours.setCampaing_id(campExist.getId());
+						
+						blackoutHourRepository.save(blackoutHours);
+
+					
+
+						
+	    			}
+					
+					//Blackouthour end
+					
 
 					Optional<Publisher> id = publisherRepository.findById(serviceCampBO.getPublisher_id());
 					CampaignPublisherLink campaignPublisherLink = new CampaignPublisherLink(campExist, id.get());

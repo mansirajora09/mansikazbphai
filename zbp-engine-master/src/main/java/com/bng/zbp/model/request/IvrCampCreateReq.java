@@ -6,7 +6,9 @@ import java.util.Map;
 public class IvrCampCreateReq {
 	private Map<String, String> service_Data = new HashMap<>();
 	private Map<String, String> timezone = new HashMap<>();
-	private Map<String, int[]> blackoutdatetime = new HashMap<>();
+	
+	private String[] blackouthour;
+
 	private IvrFlow flow;
 	private int flow_id;
 	private String[] publisher;
@@ -18,9 +20,7 @@ public class IvrCampCreateReq {
 	public Map<String, String> getTimezone() {
 		return timezone;
 	}
-	public Map<String, int[]> getBlackoutdatetime() {
-		return blackoutdatetime;
-	}
+	
 	public IvrFlow getFlow() {
 		return flow;
 	}
@@ -39,9 +39,7 @@ public class IvrCampCreateReq {
 	public void setTimezone(Map<String, String> timezone) {
 		this.timezone = timezone;
 	}
-	public void setBlackoutdatetime(Map<String, int[]> blackoutdatetime) {
-		this.blackoutdatetime = blackoutdatetime;
-	}
+
 	public void setFlow(IvrFlow flow) {
 		this.flow = flow;
 	}
@@ -60,5 +58,13 @@ public class IvrCampCreateReq {
 	public void setFlow_id(int flow_id) {
 		this.flow_id = flow_id;
 	}
+	public String[] getBlackouthour() {
+		return blackouthour;
+	}
+	public void setBlackouthour(String[] blackouthour) {
+		this.blackouthour = blackouthour;
+	}
+	
+	
 	
 }

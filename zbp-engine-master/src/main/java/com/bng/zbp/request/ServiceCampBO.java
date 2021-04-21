@@ -54,6 +54,8 @@ public class ServiceCampBO {
 	private int mxgraph_id;
 	private Long publisher_id;
 	private String service_name;
+	private String service_id;
+	
 	public Long getId() {
 		return id;
 	}
