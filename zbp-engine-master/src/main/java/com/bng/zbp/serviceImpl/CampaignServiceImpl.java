@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -496,21 +498,7 @@ public class CampaignServiceImpl implements CampaignService {
 		errorMap = new HashMap<>();
 		CampCreateReqData createCamp=new CampCreateReqData();
 		createCamp.setService_Data(requestData.getService_Data());
-		int flowId=requestData.getFlow_id();
-		Flow flow=new Flow();
-		IvrFlow IvrFlowReq=requestData.getFlow();
-		String actionId=flowId+"1";
-		flow.setActionId(actionId);
-		flow.setActionType(IvrFlowReq.getType().name());
-		flow.setSerialNumber(1);
-		flow.setAudio(IvrFlowReq.getMain_audio_file().get(IvrFlowReq.getLanguage()[0]));
-		flow.setFlowId(flowId);
-
-		flow=setSubActions(flow,IvrFlowReq.getActions());
-		flowRepository.saveAndFlush(flow);
-		logger.info("FLOW DATA"+gson.toJson(flow));
-		dtmfSubActions(flow,IvrFlowReq.getLanguage(),IvrFlowReq.getActions());
-		//logger.info("FLOW DATA"+gson.toJson(flow));
+		
 
 		ServiceCampBO serviceCampBO = campBusinessLayer.getSeriveInfo(createCamp);
 
@@ -535,7 +523,8 @@ public class CampaignServiceImpl implements CampaignService {
 				String endDateTime = newdatetime.convertdate(serviceCampBO.getEnd_date(), serviceCampBO.getEnd_time(),
 						timezonevalue, getoperator);
 				Timestamp timestamp = new Timestamp();
-				// String randomid = UUID.randomUUID().toString();
+				
+				
 
 				try {
 					Date iSOstartDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(startDateTime);
@@ -564,7 +553,8 @@ public class CampaignServiceImpl implements CampaignService {
 					int priority = serviceCampBO.getPriority();
 					Operator operatorObject = operator.get();
 					String scp_flow_name = serviceCampBO.getService_name();
-
+					int randomid = randomId();
+					int flowId=randomid;
 					campExist = new Campaign(serviceCampBO.getName(), startDate, endDate, startTime, endTime, type,
 							mediaType, flowType, serviceCampBO.getTime_zone(), serviceCampBO.getTime_zone_name(),
 							serviceCampBO.getIs_capping(), serviceCampBO.getIs_targetting(), serviceCampBO.getFlow(),
@@ -574,6 +564,35 @@ public class CampaignServiceImpl implements CampaignService {
 
 					logger.info("Going to save camapgin"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
+					
+					Campaign insertedCampaign = campaignRepository.findByName(serviceCampBO.getName());
+					
+					Flow flow=new Flow();
+					IvrFlow IvrFlowReq=requestData.getFlow();
+					String actionId=flowId+"1";
+					flow.setActionId(actionId);
+					flow.setActionType(IvrFlowReq.getType().name());
+					flow.setSerialNumber(1);
+					flow.setAudio(IvrFlowReq.getMain_audio_file().get(IvrFlowReq.getLanguage()[0]));
+					flow.setFlowId(flowId);
+
+					flow=setSubActions(flow,IvrFlowReq.getActions());
+					flowRepository.saveAndFlush(flow);
+					
+					Flow flowTh=new Flow();
+					String actionThanksId=flowId+"thanks";
+					flowTh.setActionId(actionThanksId);
+					flowTh.setActionType("PLAY");
+					flowTh.setSerialNumber(2);
+					flowTh.setAudio(IvrFlowReq.getThanks_audio_file().get(IvrFlowReq.getLanguage()[0]));
+					flowTh.setFlowId(flowId);
+					flowRepository.saveAndFlush(flowTh);
+					logger.info("FLOW DATA"+gson.toJson(flowTh));
+					dtmfSubActions(flow,IvrFlowReq.getLanguage(),IvrFlowReq.getActions());
+					//logger.info("FLOW DATA"+gson.toJson(flow));
+					
+					
+					
 					
 					//Blackout hour start
 					
@@ -616,6 +635,10 @@ public class CampaignServiceImpl implements CampaignService {
 
 					cappingRepository.save(cappingData);
 
+					
+					
+					
+					
 					// saved in capping table
 
 

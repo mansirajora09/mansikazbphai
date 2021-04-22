@@ -10,6 +10,7 @@ public class IvrFlow {
 	private HashMap<String, String> main_audio_file;
 	private ActionType type;
 	private List<Actions> actions;
+	private HashMap<String, String> thanks_audio_file;
 	public String[] getLanguage() {
 		return language;
 	}
@@ -33,6 +34,12 @@ public class IvrFlow {
 	}
 	public void setActions(List<Actions> actions) {
 		this.actions = actions;
+	}
+	public HashMap<String, String> getThanks_audio_file() {
+		return thanks_audio_file;
+	}
+	public void setThanks_audio_file(HashMap<String, String> thanks_audio_file) {
+		this.thanks_audio_file = thanks_audio_file;
 	}
 	
 }
