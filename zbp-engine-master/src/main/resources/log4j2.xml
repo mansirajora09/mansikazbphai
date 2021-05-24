@@ -7,9 +7,12 @@
                     pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable"/>
         </Console>
 
-        <RollingFile name="INFO_FILE"
+         <RollingFile name="INFO_FILE"
                      fileName="/var/log/applications/zbp-info-logger-log4j2.log"
                      filePattern="/var/log/applications/$${date:yyyy-MM}/zbp-info-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+                      <!--  <RollingFile name="INFO_FILE"
+                     fileName="/Users/ishu/Documents/zbpLog/zbp-info-logger-log4j2.log"
+                     filePattern="/Users/ishu/Documents/zbpLog/$${date:yyyy-MM}/zbp-info-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">  -->
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
@@ -25,6 +28,9 @@
         <RollingFile name="ERROR_FILE"
                      fileName="/var/log/applications/zbp-error-logger-log4j2.log"
                      filePattern="/var/log/applications/$${date:yyyy-MM}/zbp-error-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+                      <!--  <RollingFile name="ERROR_FILE"
+                     fileName="/Users/ishu/Documents/zbpLog/zbp-error-logger-log4j2.log"
+                     filePattern="/Users/ishu/Documents/zbpLog/$${date:yyyy-MM}/zbp-error-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz"> -->
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
@@ -40,6 +46,9 @@
         <RollingFile name="DEBUG_FILE"
                      fileName="/var/log/applications/zbp-debug-logger-log4j2.log"
                      filePattern="/var/log/applications/$${date:yyyy-MM}/zbp-debug-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+              <!--  <RollingFile name="DEBUG_FILE"
+                     fileName="/Users/ishu/Documents/zbpLog/zbp-debug-logger-log4j2.log"
+                     filePattern="/var/log/applications/$${date:yyyy-MM}/zbp-debug-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz"> -->
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>

@@ -56,6 +56,10 @@ private String audio;
 private String url;
 @Column(name = "value")
 private String value;
+@Column(name = "action_tag")
+private String actionTag;
+@Column(name = "nodtmf")
+private String noDtmf;
 
 public String getActionId() {
 	return actionId;
@@ -189,6 +193,18 @@ public void setSerialNumber(int serialNumber) {
 	this.serialNumber = serialNumber;
 }
 
+public String getActionTag() {
+	return actionTag;
+}
+public void setActionTag(String actionTag) {
+	this.actionTag = actionTag;
+}
+public String getNoDtmf() {
+	return noDtmf;
+}
+public void setNoDtmf(String noDtmf) {
+	this.noDtmf = noDtmf;
+}
 
 
 

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -242,7 +243,7 @@ public class CampaignServiceImpl implements CampaignService {
 							serviceCampBO.getTotal_impression_count(), 0,requestData.getFlow_id());
 
 
-					logger.info("Going to save camapgin"+gson.toJson(campExist));
+					logger.info("Going to save camapgin2"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
 
 					if (requestData.getContentInfo() != null) {
@@ -562,14 +563,15 @@ public class CampaignServiceImpl implements CampaignService {
 							serviceCampBO.getTotal_impression_count(), 0,flowId,serviceCampBO.getService_id(),serviceCampBO.getService_name());
 
 
-					logger.info("Going to save camapgin"+gson.toJson(campExist));
+					logger.info("Going to save camapgin3"+gson.toJson(campExist));
 					campExist = campaignRepository.save(campExist);
 					
 					Campaign insertedCampaign = campaignRepository.findByName(serviceCampBO.getName());
-					
+					//main
 					Flow flow=new Flow();
 					IvrFlow IvrFlowReq=requestData.getFlow();
 					String actionId=flowId+"1";
+					String repeatId=flowId+"*1*"+"repeat";
 					flow.setActionId(actionId);
 					flow.setActionType(IvrFlowReq.getType().name());
 					flow.setSerialNumber(1);
@@ -577,7 +579,18 @@ public class CampaignServiceImpl implements CampaignService {
 					flow.setFlowId(flowId);
 
 					flow=setSubActions(flow,IvrFlowReq.getActions());
+					flow.setActionTag(IvrFlowReq.getActions().get(0).getAction_tag());
+					if(null!=IvrFlowReq.getRepeat() && IvrFlowReq.getRepeat().get("value").toString().equalsIgnoreCase("true")) {
+						for (Entry<String, Object> entry : IvrFlowReq.getRepeat().entrySet()) 
+				            System.out.println("Key = " + entry.getKey() +
+				                             ", Value = " + entry.getValue());
+				            System.out.println("setting no dtmf for main");
+						flow.setNoDtmf(repeatId);
+						setRepeatDtmf(flow,IvrFlowReq.getActions().get(0),IvrFlowReq.getRepeat().get("audio_file").toString());
+				}
+					
 					flowRepository.saveAndFlush(flow);
+					
 					
 					Flow flowTh=new Flow();
 					String actionThanksId=flowId+"thanks";
@@ -672,9 +685,12 @@ public class CampaignServiceImpl implements CampaignService {
 	}
 
 	private Flow dtmfSubActions(Flow parentFlow, String[] language,List<Actions> actionsList) {	
+		System.out.println(actionsList.size());
+		
 		for(Actions actions: actionsList) {
 			String withoutflowId=parentFlow.getActionId().substring(1);
 			String actionId=parentFlow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+			String repeatId=parentFlow.getFlowId()+"repeat"+actions.getLevel()+"*"+actions.getDtmf_key();
 			Flow flowOne=new Flow();
 			flowOne.setFlowId(parentFlow.getFlowId());
 			flowOne.setActionId(actionId);
@@ -682,7 +698,21 @@ public class CampaignServiceImpl implements CampaignService {
 				flowOne.setAudio(actions.getAudio_file().get(language[0]));
 			}
 			flowOne.setActionType(actions.getType().name());
-
+			
+			//repeat section starts from here
+			
+			if(null!=actions.getRepeat() && actions.getRepeat().get("value").toString().equalsIgnoreCase("true")) {
+				for (Entry<String, Object> entry : actions.getRepeat().entrySet()) 
+		            System.out.println("Key = " + entry.getKey() +
+		                             ", Value = " + entry.getValue());
+		            System.out.println("setting no dtmf for subDtmf level:"+actions.getLevel());
+				//flow.setAudio(actions.getRepeat().get("audio_file").toString());
+				flowOne.setNoDtmf(repeatId);
+				setRepeatDtmf(flowOne,actions,"subDtmf");
+		}
+			
+//			repeat ends here	
+			
 			if(actions.getActions()!=null && actions.getActions().size()>0) {
 				flowOne=setSubActions(flowOne,actions.getActions());
 				flowOne.setBargin(true);
@@ -701,6 +731,7 @@ public class CampaignServiceImpl implements CampaignService {
 
 			}
 			logger.info("Nested flow:"+gson.toJson(flowOne));
+			flowOne.setActionTag(actions.getAction_tag());
 			flowRepository.saveAndFlush(flowOne);
 			if(actions.getActions()!=null && actions.getActions().size()>0) {
 				dtmfSubActions(flowOne,language,actions.getActions());
@@ -770,12 +801,34 @@ public class CampaignServiceImpl implements CampaignService {
 		return null;
 	}
 
+	private void setRepeatDtmf(Flow flow, Actions actions, String param) {
+		
+		System.out.println("setting repeat");
+		Flow flowRepeat=new Flow();
+		flowRepeat.setFlowId(flow.getFlowId());
+		flowRepeat.setActionId(flow.getNoDtmf());
+		if(!param.equalsIgnoreCase("subDtmf"))
+		flowRepeat.setAudio(param);
+		else
+		flowRepeat.setAudio(actions.getRepeat().get("audio_file").toString());	
+		//actions.getRepeat().get("audio_file").toString();
+		flowRepeat.setActionType(actions.getType().name());
+		
+		flowRepository.saveAndFlush(flowRepeat);
+		
+		
+	}
+
 	private Flow setSubActions(Flow flow,List<Actions> actionsList) {	
+		
+		try {
+		
 		for(Actions actions:actionsList) {
 			if(actions.getDtmf_key()!=0) {
 				String withoutflowId=flow.getActionId().substring(1);
 				System.out.println("FLOWID********:"+withoutflowId);
 				String actionId=flow.getFlowId()+"+"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
+				String repeatId=flow.getFlowId()+"+repeat"+withoutflowId+"*"+actions.getLevel()+"*"+actions.getDtmf_key();
 				System.out.println("Complete###########:"+actionId);
 				
 				if(actions.getDtmf_key()==1) {
@@ -813,11 +866,28 @@ public class CampaignServiceImpl implements CampaignService {
 					flow.setNine(actionId);
 					// c
 				}
+//				//entry of nodtmf
+//				//repeat section starts from here
+//			if(null!=actions.getRepeat() && actions.getRepeat().get("value").toString().equalsIgnoreCase("true")) {
+//					for (Entry<String, Object> entry : actions.getRepeat().entrySet()) 
+//			            System.out.println("Key = " + entry.getKey() +
+//			                             ", Value = " + entry.getValue());
+//			           // if(entry.)
+//			            System.out.println("setting no dtmf");
+//					//flow.setAudio(actions.getRepeat().get("audio_file").toString());
+//					flow.setNoDtmf(repeatId);
+//					//flow.setAudio(actions.getRepeat().get("audio_file").toString());
+//			}
+//				//repeat ends here
 
 
 			}
 
 		}
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.debug("Error occurred while "+e.getMessage());	
+			}
 		return flow;
 	}
 

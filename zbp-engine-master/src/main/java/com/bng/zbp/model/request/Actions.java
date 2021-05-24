@@ -15,6 +15,9 @@ private int level;
 private String url;
 private List<Actions> url_actions;
 private List<Actions> actions;
+private String action_tag;
+private  HashMap<String, Object>  repeat;
+
 public int getDtmf_key() {
 	return dtmf_key;
 }
@@ -65,4 +68,18 @@ public List<Actions> getUrl_actions() {
 public void setUrl_actions(List<Actions> url_actions) {
 	this.url_actions = url_actions;
 }
+public String getAction_tag() {
+	return action_tag;
+}
+public void setAction_tag(String action_tag) {
+	this.action_tag = action_tag;
+}
+public HashMap<String, Object> getRepeat() {
+	return repeat;
+}
+public void setRepeat(HashMap<String, Object> repeat) {
+	this.repeat = repeat;
+}
+
+
 }

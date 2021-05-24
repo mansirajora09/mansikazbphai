@@ -11,6 +11,8 @@ public class IvrFlow {
 	private ActionType type;
 	private List<Actions> actions;
 	private HashMap<String, String> thanks_audio_file;
+	private  HashMap<String, Object>  repeat;
+	
 	public String[] getLanguage() {
 		return language;
 	}
@@ -41,5 +43,13 @@ public class IvrFlow {
 	public void setThanks_audio_file(HashMap<String, String> thanks_audio_file) {
 		this.thanks_audio_file = thanks_audio_file;
 	}
+	
+	public HashMap<String, Object> getRepeat() {
+		return repeat;
+	}
+	public void setRepeat(HashMap<String, Object> repeat) {
+		this.repeat = repeat;
+	}
+
 	
 }
