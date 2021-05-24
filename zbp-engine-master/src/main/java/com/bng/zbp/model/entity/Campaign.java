@@ -169,6 +169,266 @@ public class Campaign extends BaseEntity {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+
+	public Time getDailyStartTime() {
+		return dailyStartTime;
+	}
+
+
+	public Time getDailyEndTime() {
+		return dailyEndTime;
+	}
+
+
+	public CampaignType getType() {
+		return type;
+	}
+
+
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+
+	public FlowType getFlowType() {
+		return flowType;
+	}
+
+
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+
+	public String getTimeZoneName() {
+		return timeZoneName;
+	}
+
+
+	public Boolean getIsCapping() {
+		return isCapping;
+	}
+
+
+	public Boolean getIsTargeting() {
+		return isTargeting;
+	}
+
+
+	public String getFlow() {
+		return flow;
+	}
+
+
+	public Operator getOperatorId() {
+		return operatorId;
+	}
+
+
+	public Integer getMxgraphId() {
+		return mxgraphId;
+	}
+
+
+	public int getPriority() {
+		return priority;
+	}
+
+
+	public String getScp_flow_name() {
+		return scp_flow_name;
+	}
+
+
+	public Status getStatus() {
+		return status;
+	}
+
+
+	public String getServiceId() {
+		return serviceId;
+	}
+
+
+	public String getSubServiceId() {
+		return subServiceId;
+	}
+
+
+	public int getFlow_id() {
+		return flow_id;
+	}
+
+
+	public int getMaxClick() {
+		return maxClick;
+	}
+
+
+	public int getCurrentImpression() {
+		return currentImpression;
+	}
+
+
+	public int getMaxImpression() {
+		return maxImpression;
+	}
+
+
+	public int getCurrentClick() {
+		return currentClick;
+	}
+
+
+	public String getService() {
+		return service;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+
+	public void setDailyStartTime(Time dailyStartTime) {
+		this.dailyStartTime = dailyStartTime;
+	}
+
+
+	public void setDailyEndTime(Time dailyEndTime) {
+		this.dailyEndTime = dailyEndTime;
+	}
+
+
+	public void setType(CampaignType type) {
+		this.type = type;
+	}
+
+
+	public void setMediaType(MediaType mediaType) {
+		this.mediaType = mediaType;
+	}
+
+
+	public void setFlowType(FlowType flowType) {
+		this.flowType = flowType;
+	}
+
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
+
+	public void setTimeZoneName(String timeZoneName) {
+		this.timeZoneName = timeZoneName;
+	}
+
+
+	public void setIsCapping(Boolean isCapping) {
+		this.isCapping = isCapping;
+	}
+
+
+	public void setIsTargeting(Boolean isTargeting) {
+		this.isTargeting = isTargeting;
+	}
+
+
+	public void setFlow(String flow) {
+		this.flow = flow;
+	}
+
+
+	public void setOperatorId(Operator operatorId) {
+		this.operatorId = operatorId;
+	}
+
+
+	public void setMxgraphId(Integer mxgraphId) {
+		this.mxgraphId = mxgraphId;
+	}
+
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+
+	public void setScp_flow_name(String scp_flow_name) {
+		this.scp_flow_name = scp_flow_name;
+	}
+
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+
+	public void setSubServiceId(String subServiceId) {
+		this.subServiceId = subServiceId;
+	}
+
+
+	public void setFlow_id(int flow_id) {
+		this.flow_id = flow_id;
+	}
+
+
+	public void setMaxClick(int maxClick) {
+		this.maxClick = maxClick;
+	}
+
+
+	public void setCurrentImpression(int currentImpression) {
+		this.currentImpression = currentImpression;
+	}
+
+
+	public void setMaxImpression(int maxImpression) {
+		this.maxImpression = maxImpression;
+	}
+
+
+	public void setCurrentClick(int currentClick) {
+		this.currentClick = currentClick;
+	}
+
+
+	public void setService(String service) {
+		this.service = service;
+	}
 	
 
 }

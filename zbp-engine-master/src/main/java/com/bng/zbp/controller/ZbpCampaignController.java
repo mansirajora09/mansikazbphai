@@ -26,6 +26,7 @@ import com.bng.zbp.model.response.TagResponse;
 import com.bng.zbp.request.CampCreateReqData;
 import com.bng.zbp.service.CampaignService;
 import com.bng.zbp.util.URIConstants;
+import com.bng.zbp.util.Utility;
 
 /**
  * @author Mansi Rajora
@@ -83,9 +84,10 @@ public class ZbpCampaignController {
 	}
 	
 	@RequestMapping(value = URIConstants.GETIVRCAMP, method = RequestMethod.POST)
-	public IvrCampCreateReq getIvrCamp(@RequestBody CampaignGetReq requestData) {
+	public String getIvrCamp(@RequestBody CampaignGetReq requestData) {
 		IvrCampCreateReq response=campaignService.getIvrCamp(requestData);
-		return response;
+		System.out.println("INSIDE GET IVRCAMP"+response.getService_Data().get("name"));
+		return Utility.gson.toJson(response) ;
 
 	}
 	

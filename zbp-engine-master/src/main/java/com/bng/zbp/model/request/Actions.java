@@ -8,6 +8,7 @@ import com.bng.zbp.model.enums.UrlActions;
 
 public class Actions {
 private int dtmf_key;
+private String actionId;
 private UrlActions url_key;
 private HashMap<String, String> audio_file;
 private ActionType type;
@@ -64,5 +65,11 @@ public List<Actions> getUrl_actions() {
 }
 public void setUrl_actions(List<Actions> url_actions) {
 	this.url_actions = url_actions;
+}
+public String getActionId() {
+	return actionId;
+}
+public void setActionId(String actionId) {
+	this.actionId = actionId;
 }
 }
