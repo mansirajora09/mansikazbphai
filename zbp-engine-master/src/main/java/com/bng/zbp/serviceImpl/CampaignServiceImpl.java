@@ -955,15 +955,38 @@ public class CampaignServiceImpl implements CampaignService {
 
 	@Override
 	public IvrCampCreateReq getIvrCamp(CampaignGetReq requestData) {
-		List<Flow> flowList=flowRepository.findAllByFlowIdOrderById(4);
-		IvrCampCreateReq responce =new IvrCampCreateReq();
-		int level=1;
+		
+		BaseResponse response=new BaseResponse();
+		errorMap = new HashMap<>();
+		Optional<Campaign> campaignOp=campaignRepository.findById(requestData.getCampaignId());
+		if(campaignOp.isPresent()) {
+			Campaign campaign=campaignOp.get();
+			int flowId=campaign.getFlow_id();
+			List<Flow> flowList=flowRepository.findAllByFlowIdOrderById(flowId);
+			IvrCampCreateReq responce =new IvrCampCreateReq();
+			
+			Map<String, String> serviceCampData=gson.fromJson(gson.toJson(campaign),Map.class);
+			String serviceCampBOd=gson.toJson(serviceCampData);
+			logger.info("UTILITY Service  Data : "+serviceCampBOd);
+			responce.setService_Data(serviceCampData);
+			
+			
+			
+			int level=1;
 
-		IvrFlow ivrFlow=getFlow(flowList,level);
-		responce.setFlow(ivrFlow);
+			IvrFlow ivrFlow=getFlow(flowList,level);
+			responce.setFlow(ivrFlow);
 
-		System.out.println("Flow data:"+gson.toJson(flowList));
-		return responce;
+			System.out.println("Flow data:"+gson.toJson(flowList));
+			return responce;
+		}else
+		{
+			//response.setStatus(ResponseStatus.FAILED);
+			//response.setError("Flow already exist with this name");
+			return null;
+		}
+		
+		
 	}
 
 	IvrFlow getFlow( List<Flow> flowList,int level) {
@@ -983,16 +1006,53 @@ public class CampaignServiceImpl implements CampaignService {
 		if(flow.getOne()!=null && !flow.getOne().isEmpty()) {
 			List<Actions> actionList1=getSubFlow(flowList,flow.getOne(), level,1);
 			actionList.add(actionList1.get(0));
+			System.out.println("1 DTMF SUBFLOW"+gson.toJson(actionList1));
 		}
 		if(flow.getTwo()!=null && !flow.getTwo().isEmpty()) {
 			List<Actions> actionList2=getSubFlow(flowList,flow.getTwo(), level,2);
 			actionList.add(actionList2.get(0));
 		}
+		
+		if(flow.getThree()!=null && !flow.getThree().isEmpty()) {
+			List<Actions> actionList3=getSubFlow(flowList,flow.getThree(), level,3);
+			actionList.add(actionList3.get(0));
+		}
+		
+		if(flow.getFour()!=null && !flow.getFour().isEmpty()) {
+			List<Actions> actionList4=getSubFlow(flowList,flow.getFour(), level,4);
+			actionList.add(actionList4.get(0));
+		}
+		
+		if(flow.getFive()!=null && !flow.getFive().isEmpty()) {
+			List<Actions> actionList5=getSubFlow(flowList,flow.getFive(), level,5);
+			actionList.add(actionList5.get(0));
+		}
+		
+		if(flow.getSix()!=null && !flow.getSix().isEmpty()) {
+			List<Actions> actionList6=getSubFlow(flowList,flow.getSix(), level,6);
+			actionList.add(actionList6.get(0));
+		}
+		
+		if(flow.getSeven()!=null && !flow.getSeven().isEmpty()) {
+			List<Actions> actionList7=getSubFlow(flowList,flow.getSeven(), level,7);
+			actionList.add(actionList7.get(0));
+		}
+		
+		if(flow.getEight()!=null && !flow.getEight().isEmpty()) {
+			List<Actions> actionList8=getSubFlow(flowList,flow.getEight(), level,8);
+			actionList.add(actionList8.get(0));
+		}
+		if(flow.getNine()!=null && !flow.getNine().isEmpty()) {
+			List<Actions> actionList9=getSubFlow(flowList,flow.getNine(), level,9);
+			actionList.add(actionList9.get(0));
+		}
+		
 		ivrFlow.setActions(actionList);
 		return ivrFlow;
 	}
 
 	List<Actions> getSubFlow( List<Flow> flowList,String actionId,int level,int dtmf) {
+		List<Actions> actionsList=new ArrayList<>();
 		System.out.println("Inside Sub fLOW iD:"+actionId);
 		Optional<Flow> flowOpt=flowList.stream().filter(flowData->flowData.getActionId().equals(actionId)).findFirst();
 		Flow flow=flowOpt.get();
@@ -1000,43 +1060,72 @@ public class CampaignServiceImpl implements CampaignService {
 		HashMap<String,String> audio_file=new HashMap<>();
 		audio_file.put("en", flow.getAudio());
 		ActionType actionType =ActionType.valueOf(flow.getActionType());
+		if(actionType.equals(ActionType.HITURL)) {
+			actions.setUrl(flow.getUrl());
+			//if(flow.getUrlSuccess()!=null && !flow.getUrlSuccess().isEmpty())
+			
+			
+		}
 		actions.setType(actionType);
 		actions.setAudio_file(audio_file);
 		actions.setLevel(level);
 		actions.setDtmf_key(dtmf);
-		if(flow.getZero()!=null && !flow.getZero().isEmpty()) {
+		actions.setActionId(actionId);
+		
+		List<Actions> subActionsList=new ArrayList<>();
+	    if(flow.getZero()!=null && !flow.getZero().isEmpty()) {
 			List<Actions> actionList0=getSubFlow(flowList,flow.getZero(), level+1,0);
+			subActionsList.add(actionList0.get(0));
 			
 		}
+		
 		if(flow.getOne()!=null && !flow.getOne().isEmpty()) {
 			List<Actions> actionList1=getSubFlow(flowList,flow.getOne(), level+1,1);
+			subActionsList.add(actionList1.get(0));
+			
 		}
+		
 		if(flow.getTwo()!=null && !flow.getTwo().isEmpty()) {
 			List<Actions> actionList2=getSubFlow(flowList,flow.getTwo(), level+1,2);
+			subActionsList.add(actionList2.get(0));
+
 		}
 		if(flow.getThree()!=null && !flow.getThree().isEmpty()) {
 			List<Actions> actionList3=getSubFlow(flowList,flow.getThree(), level+1,2);
+			subActionsList.add(actionList3.get(0));
+
 		}
 		if(flow.getFour()!=null && !flow.getFour().isEmpty()) {
 			List<Actions> actionList4=getSubFlow(flowList,flow.getFour(), level+1,2);
+			subActionsList.add(actionList4.get(0));
+
 		}
 		if(flow.getFive()!=null && !flow.getFive().isEmpty()) {
 			List<Actions> actionList5=getSubFlow(flowList,flow.getFive(), level+1,2);
+			subActionsList.add(actionList5.get(0));
+
 		}
 		if(flow.getSix()!=null && !flow.getSix().isEmpty()) {
 			List<Actions> actionList6=getSubFlow(flowList,flow.getSix(), level+1,2);
+			subActionsList.add(actionList6.get(0));
+
 		}
 		if(flow.getSeven()!=null && !flow.getSeven().isEmpty()) {
 			List<Actions> actionList7=getSubFlow(flowList,flow.getSeven(), level+1,2);
+			subActionsList.add(actionList7.get(0));
+
+
 		}
 		if(flow.getEight()!=null && !flow.getEight().isEmpty()) {
 			List<Actions> actionList8=getSubFlow(flowList,flow.getEight(), level+1,2);
+			subActionsList.add(actionList8.get(0));
+
 		}
-		if(flow.getThree()!=null && !flow.getNine().isEmpty()) {
-			List<Actions> actionList9=getSubFlow(flowList,flow.getThree(), level+1,2);
+		if(flow.getNine()!=null && !flow.getNine().isEmpty()) {
+			List<Actions> actionList9=getSubFlow(flowList,flow.getNine(), level+1,2);
+			subActionsList.add(actionList9.get(0));
 		}
-		
-		List<Actions> actionsList=new ArrayList<>();
+		actions.setActions(subActionsList);
 		actionsList.add(actions);
 		return actionsList;
 	}

@@ -1,4 +1,7 @@
 package com.bng.zbp.util;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +17,7 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 public class Utility {
 	private final static Logger logger = LoggerFactory.getLogger(ZbpCampaignController.class);
-	private static final Gson gson = new GsonBuilder().serializeNulls().create();
+	public static final Gson gson = new GsonBuilder().serializeNulls().create();
 	private static final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
 	public static ServiceCampBO mapCampDAOToCampBO(String serviceData)
@@ -58,6 +61,17 @@ public class Utility {
 		MapperFacade mapper = mapperFactory.getMapperFacade();
 		User userMongoDAO = mapper.map(userMongoBO, User.class);
 		return userMongoDAO;
+	}
+
+
+	public static Map<String, String> mapCampDAOToService(String campaignData) {
+		if(campaignData==null)
+		return null;
+		
+		Map<String, String> serviceCampData=gson.fromJson(campaignData,Map.class);
+		String serviceCampBOd=gson.toJson(serviceCampData);
+		logger.info("UTILITY Service  Data : "+serviceCampBOd);
+		return serviceCampData;
 	}
 	
 	

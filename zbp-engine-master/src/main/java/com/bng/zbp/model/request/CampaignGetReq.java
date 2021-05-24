@@ -2,17 +2,21 @@ package com.bng.zbp.model.request;
 
 public class CampaignGetReq {
 private String userId;
-private String campaignId;
+private Long campaignId;
 public String getUserId() {
 	return userId;
 }
-public String getCampaignId() {
-	return campaignId;
-}
+
 public void setUserId(String userId) {
 	this.userId = userId;
 }
-public void setCampaignId(String campaignId) {
+
+public Long getCampaignId() {
+	return campaignId;
+}
+
+public void setCampaignId(Long campaignId) {
 	this.campaignId = campaignId;
 }
+
 }

@@ -3,6 +3,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.bng.zbp.business.CampBusinessLayer;
 import com.bng.zbp.controller.ZbpCampaignController;
+import com.bng.zbp.model.entity.Campaign;
 import com.bng.zbp.model.response.BaseResponse;
 import com.bng.zbp.request.CampCreateReqData;
 import com.bng.zbp.request.ServiceCampBO;
@@ -33,6 +36,14 @@ public class CampBusinessLayerImpl implements CampBusinessLayer {
 		ServiceCampBO serviceCampBO = Utility.mapCampDAOToCampBO(serviceData);
 		return serviceCampBO;
 	}
+	
+	public  Map<String, String> getSeriveinfofromCamapign(Campaign campaign) {
+		String campaignData=gson.toJson(campaign);
+		logger.info("Business Data requestdate: "+campaignData);
+		 Map<String, String> service_Data = Utility.mapCampDAOToService(campaignData);
+		return service_Data; 
+	}
+	
 	public String fileConverter(String url) {
 		try {
 			URL obj = new URL(url);
